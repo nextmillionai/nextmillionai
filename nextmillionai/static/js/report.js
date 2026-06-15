@@ -454,9 +454,10 @@ function renderEvidence(data){
 function dnaShow(which){
   document.getElementById('dnaRadar').style.display=which==='radar'?'block':'none';
   document.getElementById('dnaMapWrap').style.display=which==='map'?'block':'none';
-  // Zone panel + caveat only visible in map mode
+  // Zone panel + caveat only visible in map mode. Toggle DISPLAY (not innerHTML)
+  // so the default top-fit zone is preserved across toggles instead of wiped.
   var zp=document.getElementById('dnaZonePanel');
-  if(zp&&which==='radar')zp.innerHTML='';
+  if(zp)zp.style.display=which==='map'?'':'none';
   document.getElementById('dnaMapCaveat').style.display=which==='map'?'':'none';
   // Kinds stay visible in both modes
   document.getElementById('dnaTabRadar').classList.toggle('on',which==='radar');

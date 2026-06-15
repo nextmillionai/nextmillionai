@@ -40,3 +40,17 @@ Thumbs.db
 # Claude Code
 .claude/*
 !.claude/settings.json
+
+# --- INTERNAL-ONLY (never push to the public mirror) ---
+# Internal dev docs kept locally; excluded from the public repo by
+# scripts/seed-public.sh (manifest: docs/launch/PUBLIC-MIRROR.md).
+# CURRENT.md / CHANGELOG.md stay the simple public versions (tracked); the
+# full internal versions live in the *.internal.md files below, gitignored.
+CURRENT.internal.md
+CHANGELOG.internal.md
+docs/launch/
+docs/archive/
+docs/agents/WEBSITE.md
+scripts/public/
+scripts/seed-public.sh
+netlify.toml

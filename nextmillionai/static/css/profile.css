@@ -67,10 +67,10 @@ h2{font-family:var(--disp);font-weight:600;font-size:19px;letter-spacing:-.01em;
 .cards-legend .cl i{width:9px;height:9px;border-radius:3px;display:inline-block}
 .cards-legend .cl i.g{background:var(--good)}.cards-legend .cl i.o{background:var(--mid)}.cards-legend .cl i.p{background:var(--purple)}.cards-legend .cl i.b{background:var(--blue)}
 .cards-legend .cl i.n{background:var(--surface);border:1px solid var(--line)}
-.card summary{list-style:none;cursor:pointer;padding:14px 16px;display:flex;flex-direction:column;min-height:130px}
+.card summary{list-style:none;cursor:pointer;padding:14px 16px;display:flex;flex-direction:column;min-height:157px}
 .card summary::-webkit-details-marker{display:none}
 .card .q{font-family:var(--mono);font-size:9px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
-.card .n{font-family:var(--disp);font-weight:700;font-size:26px;letter-spacing:-.01em;overflow-wrap:anywhere;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.card .n{font-family:var(--disp);font-weight:700;font-size:26px;letter-spacing:-.01em;line-height:1.12;overflow-wrap:anywhere}
 .card .d{font-size:12px;color:var(--muted);margin-top:4px}
 /* expand affordance: a single chevron, pinned to the card's bottom-left so
    every card is the same height; rotates up when open (no "what this means" text) */
@@ -162,16 +162,11 @@ h2{font-family:var(--disp);font-weight:600;font-size:19px;letter-spacing:-.01em;
 /* === PRIVATE GROWTH SECTION === */
 .private{background:var(--surface-2);border:1px dashed #D9C9A8;border-radius:14px;padding:22px}
 .private .plock{display:inline-flex;align-items:center;gap:7px;font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--mid);background:#FBF3E2;border:1px solid #ECD9B0;padding:5px 10px;border-radius:100px;margin-bottom:14px}
-.growth-item{display:flex;gap:12px;margin-bottom:14px}.growth-item .gi{flex:0 0 auto;width:22px;height:22px;border-radius:6px;background:var(--tint);display:grid;place-items:center;font-family:var(--mono);font-size:11px;color:var(--ink-soft)}.growth-item .obs{font-weight:600;font-size:13.5px}.growth-item .nxt{font-size:13px;color:var(--ink-soft);margin-top:2px}
+/* .growth-item moved to tabs-shared.css (shared across profile + report) */
 .private .note{font-family:var(--mono);font-size:10.5px;color:var(--muted);margin-top:6px}
 
 /* === DETAILS TAB === */
-.proj{display:flex;justify-content:space-between;align-items:center;gap:14px;padding:13px 0;border-bottom:1px solid var(--line-2)}
-.proj .pn{font-weight:600;font-size:14px}.proj .pd{font-size:12.5px;color:var(--muted)}
-.vis{font-family:var(--mono);font-size:10.5px;border:1px solid var(--line);border-radius:100px;padding:5px 11px;cursor:pointer;white-space:nowrap}
-.vis.shown{color:var(--good);background:var(--green-bg);border-color:var(--g2)}
-.vis.hidden{color:var(--muted);background:var(--surface-2)}
-.links{display:flex;flex-direction:column;gap:0}
+/* .proj/.vis/.links moved to tabs-shared.css (shared across profile + report) */
 .chips{display:flex;flex-wrap:wrap;gap:7px;margin-top:6px}.chip{font-family:var(--mono);font-size:11px;background:var(--surface);border:1px solid var(--line);border-radius:7px;padding:5px 10px}
 
 /* === EXPERIMENTAL SIGNALS (details tab) === */
@@ -216,12 +211,7 @@ footer{border-top:1px solid var(--line);margin-top:40px;padding:26px 0 70px}
 @media(max-width:640px){.bcard{flex-direction:column}.bc-side{flex-direction:row;flex-wrap:wrap;align-items:center}}
 
 /* === WORK TAB === */
-.wc-top{display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
-.wc-name{font-family:var(--disp);font-weight:600;font-size:15px;word-break:break-word}
-.wc-meta{display:flex;gap:12px;font-family:var(--mono);font-size:10px;color:var(--muted)}
-.wc-langs{display:flex;flex-wrap:wrap;gap:6px}
-.spark{display:block}
-.spark polyline{stroke:var(--accent)}
+/* .wc-*/.spark moved to tabs-shared.css (shared across profile + report) */
 
 /* === LAB TAB === */
 .labdot{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--purple);margin-left:6px;vertical-align:2px}
@@ -292,8 +282,7 @@ section{position:relative}
 
 /* button hierarchy: primary dark, ghost-dark, quiet */
 .btn.dark.ghost{background:var(--surface);color:var(--ink);border-color:var(--ink)}
-.btn.quiet{border-color:transparent;background:transparent;color:var(--muted)}
-.btn.quiet:hover{color:var(--ink);border-color:var(--line)}
+/* .btn.quiet moved to tabs-shared.css (shared across profile + report) */
 
 /* glyphs */
 .gl{vertical-align:-3px;flex:0 0 auto}
@@ -407,7 +396,6 @@ section{position:relative}
   .bcard,.card,.collab,.pm-row,.khd,.dim-panel.open,.donut-block,
   .act-stats,.pd{break-inside:avoid}
   .bcard{cursor:auto}
-  .card summary{min-height:0}
 }
 
 /* ════ FINAL TWEAKS ════ */

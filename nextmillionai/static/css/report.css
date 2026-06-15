@@ -188,8 +188,12 @@ footer{border-top:1px solid var(--line);margin-top:44px;padding:28px 0 70px}
 .persona-gl{color:var(--accent)}
 .growth-toggle{display:flex;align-items:center;gap:8px;font-family:var(--mono);font-size:11px;color:var(--ink-soft);margin-top:10px;cursor:pointer}
 .growth-toggle input{accent-color:var(--accent)}
+/* breathing room between the kinds caption and the radar/map above it */
+#dnaKinds .h2sub{margin-top:40px}
 .dna-kinds{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:10px;margin-top:14px}
-.dk{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px 16px;opacity:.62}
+/* min-height makes every craft card the same height (rows otherwise vary with
+   the optional "Appears when…" line); content tops, whitespace pads the rest */
+.dk{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px 16px;opacity:.62;min-height:176px}
 .dk.on{opacity:1;border-color:var(--accent)}
 .dk-head{display:flex;align-items:center;gap:8px}
 .dk-head b{font-family:var(--disp);font-size:13.5px}
