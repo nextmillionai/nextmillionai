@@ -158,9 +158,11 @@ Small, purposeful, and skippable:
 Print is a first-class surface (the PDF is the document):
 
 - `print-color-adjust: exact` everywhere — brand colors survive.
-- Full mode (default): every `<details>` opened via `beforeprint`,
-  all six dimension details rendered (`#pfPrintDims`), restored after.
-- Snapshot mode: `.snap-hide` sections drop to a one-page overview.
+- Two PDF targets: **Profile PDF** (`.pdf-profile`) and **Report PDF**
+  (`.pdf-report`). Each shows all visible content for that surface;
+  the report hides only the evidence appendix.
+- Cross-page print: clicking "Download PDF" for the other surface
+  opens it in a new window with `?print=1`, auto-prints, then closes.
 - Chrome (tabs, buttons, live badge) hides; `break-inside: avoid` on
   cards, map, tables.
 

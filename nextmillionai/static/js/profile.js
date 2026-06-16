@@ -776,7 +776,16 @@ function renderStrengthHighlight(P){
 // and a scrubber to walk the full history — not just the last 26 weeks.
 
 var _actOffsetWeeks=0;
+var _actFilter='all';
 var HM_WEEKS=26;
+
+function actFilter(mode){
+  _actFilter=mode;
+  _actOffsetWeeks=0;
+  var btns=document.querySelectorAll('#pfActFilter .seg-b');
+  btns.forEach(function(b){b.classList.toggle('on',b.textContent.toLowerCase()===mode);});
+  renderActivity(window._P);
+}
 
 function _dayUnits(d){return (d.sessions||0)+(d.commits||0);}
 
@@ -808,6 +817,8 @@ function renderActivity(P){
   var byDate={};
   abd.forEach(function(d){byDate[d.date]=d;});
 
+  var gridEl=document.getElementById('pfGrid');
+
   // Fill the available width with small cells, ending at TODAY — the grid
   // spreads across the container instead of stopping mid-way. Week count is
   // derived from the width so the dots stay small and the right edge is today.
@@ -816,12 +827,26 @@ function renderActivity(P){
   var _cell=(window.innerWidth<=520?9:11),_gap=3;
   HM_WEEKS=Math.max(18,Math.min(105,Math.floor((_availW+_gap)/(_cell+_gap))));
 
+  // Time filter: override HM_WEEKS for 30d/7d
+  var scrub=document.getElementById('pfScrub');
+  if(_actFilter==='7d'){
+    HM_WEEKS=2;
+    scrub.style.display='flex';
+    scrub.style.visibility='hidden';
+  }else if(_actFilter==='30d'){
+    HM_WEEKS=5;
+    scrub.style.display='flex';
+    scrub.style.visibility='hidden';
+  }else{
+    scrub.style.visibility='';
+  }
+  gridEl.classList.toggle('filtered',_actFilter!=='all');
+
   // Scrubber bounds across the full history
   var firstDate=abd.length?abd[0].date:null;
   var totalWeeks=firstDate?Math.ceil((Date.now()-new Date(firstDate+'T00:00:00'))/(7*86400000)):HM_WEEKS;
   var maxOffset=Math.max(0,totalWeeks-HM_WEEKS);
-  var scrub=document.getElementById('pfScrub');
-  if(maxOffset>0){
+  if(_actFilter==='all'&&maxOffset>0){
     scrub.style.display='flex';
     var range=document.getElementById('pfScrubRange');
     range.max=maxOffset;
@@ -873,18 +898,25 @@ function renderActivity(P){
     return '<span style="left:'+(m.w/HM_WEEKS*100)+'%">'+m.label+'</span>';
   }).join('');
   document.getElementById('pfScrubL').textContent=cells[0].date+' → '+cells[cells.length-1].date;
-  document.getElementById('pfActPill').textContent=(a.activeDays||0)+' active days all-time';
 
-  // Stats: streak · sessions this month · avg session · peak hour
-  var thisMonth=_localDate(new Date()).slice(0,7);
-  var monthSessions=abd.filter(function(d){return d.date.slice(0,7)===thisMonth;})
-    .reduce(function(s,d){return s+(d.sessions||0);},0);
+  // Pill label: range-aware
+  var pillLabel=_actFilter==='all'
+    ?(a.activeDays||0)+' active days all-time'
+    :_actFilter.toUpperCase()+' view';
+  document.getElementById('pfActPill').textContent=pillLabel;
+
+  // Stats: range-scoped for 30d/7d
+  var rangeStart=_localDate(start);
+  var rangeAbd=_actFilter==='all'?abd:abd.filter(function(d){return d.date>=rangeStart;});
+  var rangeDays=rangeAbd.filter(function(d){return _dayUnits(d)>0;}).length;
+  var rangeSessions=rangeAbd.reduce(function(s,d){return s+(d.sessions||0);},0);
+  var rangeCommits=rangeAbd.reduce(function(s,d){return s+(d.commits||0);},0);
   var peak=(P.wrappedStats_raw||{}).peakProductivityHour;
   var peakLabel=peak!=null?((peak%12||12)+(peak<12?' AM':' PM')):'—';
   document.getElementById('pfActStats').innerHTML=
-    '<div><div class="n">'+(a.streak||0)+'</div><div class="l">Day streak</div></div>'
-    +'<div><div class="n">'+monthSessions+'</div><div class="l">Sessions this month</div></div>'
-    +'<div><div class="n">'+(a.avgSessionHours||0)+'h</div><div class="l">Avg session</div></div>'
+    '<div><div class="n">'+((_actFilter==='all')?(a.streak||0):rangeDays)+'</div><div class="l">'+(_actFilter==='all'?'Day streak':'Active days')+'</div></div>'
+    +'<div><div class="n">'+rangeSessions+'</div><div class="l">Sessions'+(_actFilter!=='all'?' ('+_actFilter+')':' this month')+'</div></div>'
+    +'<div><div class="n">'+rangeCommits+'</div><div class="l">Commits'+(_actFilter!=='all'?' ('+_actFilter+')':'')+'</div></div>'
     +'<div><div class="n">'+peakLabel+'</div><div class="l">Peak hour</div></div>';
 
   _bindHeatTips(byDate);
@@ -957,6 +989,7 @@ document.addEventListener('DOMContentLoaded',function(){
     render(P0);
     nmaInitFlip('profile','viewOverview');
     initPdfStyle('pfPdfStyle');
+    nmaMaybeAutoPrint();
     return;
   }
   // Served mode reads /api/profile; the static export artifact falls
@@ -992,6 +1025,7 @@ document.addEventListener('DOMContentLoaded',function(){
       render(P);
       nmaInitFlip('profile','viewOverview');
       initPdfStyle('pfPdfStyle');
+      nmaMaybeAutoPrint();
     });
   }).catch(function(){});
 });

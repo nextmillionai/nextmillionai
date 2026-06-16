@@ -428,8 +428,15 @@ function renderShare(){
     // 2. Print / PDF
     +'<div class="share-card">'
       +'<div class="sc-t"><span data-g="download"></span> Print / PDF</div>'
-      +'<div class="sc-d">One-page snapshot of your profile or report. Brand colors kept.</div>'
-      +'<button class="btn" onclick="window.print()" style="margin-top:10px">Print / Save PDF</button>'
+      +'<div class="sc-d">Your profile or report as a PDF &mdash; everything visible on the page, brand colors kept.</div>'
+      +'<div class="sc-md">'
+        +'<span class="sc-md-lbl">Profile</span>'
+        +'<button class="btn" onclick="nmaPrintSurface(\'profile\',this)">Download PDF</button>'
+      +'</div>'
+      +'<div class="sc-md">'
+        +'<span class="sc-md-lbl">Report</span>'
+        +'<button class="btn" onclick="nmaPrintSurface(\'report\',this)">Download PDF</button>'
+      +'</div>'
     +'</div>'
 
     // 3. Raw JSON
@@ -732,6 +739,18 @@ function workFilterLang(l){
   renderWorkList();
 }
 
+
+function nmaPrintSurface(surface,btn){
+  if(surface===window._NMA_SURFACE){
+    window.print();
+    return;
+  }
+  var base=window._servedMode
+    ?(surface==='report'?'/report':'/profile')
+    :(surface==='report'?'./report.html':'./profile.html');
+  window.open(base+'?print=1','_blank');
+  if(btn)flashBtn(btn,'opening\u2026');
+}
 
 function flashBtn(btn,msg){
   if(!btn)return;

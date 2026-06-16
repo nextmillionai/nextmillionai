@@ -41,7 +41,7 @@
 .exp .d{font-size:12.5px;color:var(--ink-soft)}
 .exp .cf{margin-top:9px;font-family:var(--mono);font-size:10px;color:var(--muted)}
 .exp .cf i{display:inline-block;width:32px;height:4px;border-radius:2px;background:var(--g0);position:relative;overflow:hidden;vertical-align:middle;margin-right:6px}.exp .cf i b{position:absolute;left:0;top:0;bottom:0;background:var(--mid);border-radius:2px}
-  .exp-grid{grid-template-columns:1fr}
+@media(max-width:680px){.exp-grid{grid-template-columns:1fr}}
 .work-band{display:flex;gap:36px;flex-wrap:wrap;background:var(--surface-2);border:1px solid var(--line-2);border-radius:14px;padding:18px 24px;margin:16px 0 22px}
 .work-band .n{font-family:var(--disp);font-weight:700;font-size:22px}
 .work-band .l{font-family:var(--mono);font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}

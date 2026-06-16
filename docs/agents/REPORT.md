@@ -28,11 +28,10 @@ differs from the profile. JSON contract: [`SCHEMA.md`](../../nextmillionai/docs/
 
 ## PDF / print
 
-- `report` header + profile Share tab expose a **PDF style: Full |
-  Snapshot** toggle (persisted).
-- **Full** expands every collapsible + all six dimension details on
-  `beforeprint`; **Snapshot** prints the one-page overview (`.snap-hide`
-  sections drop). Brand colors kept in print.
+- Share tab exposes two PDF buttons: **Profile PDF** (`.pdf-profile`)
+  and **Report PDF** (`.pdf-report`). Each shows all visible content
+  for that surface. Cross-page print opens the target page with
+  `?print=1`, auto-prints, then closes. Brand colors kept in print.
 
 ## Invariants
 

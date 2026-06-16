@@ -312,14 +312,8 @@ h2{font-size:24px;margin:8px 0 20px}
 .pdfstyle button{font-family:var(--mono);font-size:10.5px;border:1px solid var(--line);background:var(--surface);color:var(--ink-soft);border-radius:7px;padding:5px 11px;cursor:pointer}
 .pdfstyle button.on{background:var(--ink);color:#fff;border-color:var(--ink)}
 @media print{
-  /* Snapshot = cards + scores only; Full keeps the whole document */
-  body.pdf-snapshot #repNarrative,
-  body.pdf-snapshot #repMapSection,
-  body.pdf-snapshot #repProjSection,
-  body.pdf-snapshot #repTimeSection,
-  body.pdf-snapshot #repDnaSection,
-  body.pdf-snapshot #repEvidenceSection,
-  body.pdf-snapshot hr.div{display:none!important}
+  /* Report PDF: show all visible content, hide only the evidence appendix */
+  body.pdf-report #repEvidenceSection{display:none!important}
 
   /* Beautiful PDF: let SECTIONS flow and break across pages (avoiding
      break-inside on a tall section is what left big blank gaps). Keep only

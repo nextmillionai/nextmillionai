@@ -205,39 +205,27 @@ function liveManualRefresh(btn){
 }
 
 // ═══════════════════════════════════════════════════════════
-// PDF / print style — Snapshot only for now (the one-page overview).
-// Full mode (every collapsible expanded) is commented out below;
-// re-enable by restoring getPdfStyle/setPdfStyle/pdfStyleControl
-// and the expansion logic in _pdfBeforePrint.
+// PDF / print style — surface-specific: body.pdf-profile or
+// body.pdf-report. Cross-page print opens the target page in
+// a new window with ?print=1, auto-prints, then closes.
 // ═══════════════════════════════════════════════════════════
 
-function getPdfStyle(){return 'snapshot';}
-
-// -- Full mode toggle (disabled) --
-// function setPdfStyle(v){
-//   try{localStorage.setItem('nmaPdfStyle',v);}catch(e){}
-//   document.body.classList.toggle('pdf-snapshot',v==='snapshot');
-//   document.querySelectorAll('.pdfstyle button').forEach(function(b){
-//     b.classList.toggle('on',b.getAttribute('data-v')===v);
-//   });
-// }
-//
-// function pdfStyleControl(){
-//   var v=getPdfStyle();
-//   return '<span class="pdfstyle" title="What Print / Save PDF contains: Full = every section and explanation expanded; Snapshot = the one-page overview">PDF'
-//     +'<button data-v="full" class="'+(v==='full'?'on':'')+'" onclick="setPdfStyle(\'full\')">Full</button>'
-//     +'<button data-v="snapshot" class="'+(v==='snapshot'?'on':'')+'" onclick="setPdfStyle(\'snapshot\')">Snapshot</button></span>';
-// }
-
 function initPdfStyle(mountId){
-  // No toggle rendered — snapshot is the only mode for now.
-  document.body.classList.add('pdf-snapshot');
+  if(location.search.indexOf('print=1')>=0){
+    window._autoPrintPending=true;
+  }
   window.addEventListener('beforeprint',_pdfBeforePrint);
   window.addEventListener('afterprint',_pdfAfterPrint);
 }
 
+function nmaMaybeAutoPrint(){
+  if(!window._autoPrintPending)return;
+  window._autoPrintPending=false;
+  setTimeout(function(){window.print();},200);
+  setTimeout(function(){window.close();},400);
+}
+
 function _pdfBeforePrint(){
-  // Force the overview surface visible for print (hide shared tabs).
   window._printViewRestore=null;
   if(typeof NMA_TAB_IDS==='object'&&window._NMA_TAB&&window._NMA_TAB!=='overview'){
     window._printViewRestore=window._NMA_TAB;
@@ -248,36 +236,13 @@ function _pdfBeforePrint(){
       if(el)el.style.display='none';
     });
   }
-  // Snapshot mode — no expansion needed; return early.
-  // -- Full mode expansion (disabled) --
-  // window._printOpened=[];
-  // document.querySelectorAll('details:not([open])').forEach(function(d){
-  //   d.setAttribute('open','');
-  //   window._printOpened.push(d);
-  // });
-  // var mount=document.getElementById('pfPrintDims');
-  // if(mount&&window._P&&typeof esc==='function'){
-  //   mount.innerHTML='<div class="pd-title">Dimension detail</div>'
-  //     +(window._P.dimensions||[]).map(function(d){
-  //       return '<div class="pd"><div class="pd-h"><b>'+esc(d.name)+'</b><span>'
-  //         +(d.score!=null?d.score:'insufficient')+'</span></div>'
-  //         +'<div class="pd-c"><div><div class="dl">What it measures</div><p>'+esc(d.what||'')+'</p></div>'
-  //         +'<div><div class="dl">Your evidence</div>'+((d.evidence||[]).length
-  //           ?d.evidence.map(function(x){return '<div class="pd-ev">▸ '+esc(x)+'</div>';}).join('')
-  //           :'<p>insufficient data — not estimated</p>')+'</div>'
-  //         +'<div><div class="dl">How it is scored</div><p>'+esc(d.how||'')+'</p></div></div></div>';
-  //     }).join('');
-  // }
+  var surface=window._NMA_SURFACE||'profile';
+  document.body.classList.add('pdf-'+surface);
 }
 
 function _pdfAfterPrint(){
-  // -- Full mode cleanup (disabled) --
-  // (window._printOpened||[]).forEach(function(d){d.removeAttribute('open');});
-  // window._printOpened=[];
-  // var mount=document.getElementById('pfPrintDims');
-  // if(mount)mount.innerHTML='';
-
-  // Restore the shared tab the user was on before we forced the overview.
+  document.body.classList.remove('pdf-profile');
+  document.body.classList.remove('pdf-report');
   if(window._printViewRestore&&typeof nmaShowView==='function'){
     nmaShowView(window._printViewRestore);
     window._printViewRestore=null;

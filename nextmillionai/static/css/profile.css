@@ -128,8 +128,10 @@ h2{font-family:var(--disp);font-weight:600;font-size:19px;letter-spacing:-.01em;
 .act-head .pill{font-family:var(--mono);font-size:10px;color:var(--good);background:var(--g1);border:1px solid var(--g2);padding:3px 9px;border-radius:100px}
 .act-legend{margin-left:auto;display:flex;align-items:center;gap:6px;font-family:var(--mono);font-size:10px;color:var(--muted)}
 .act-legend i{width:11px;height:11px;border-radius:3px;display:inline-block}
-.hm-wrap{width:100%;max-width:100%;overflow-x:auto}
+.act-filter{margin-right:0}
+.hm-wrap{width:100%;max-width:100%;overflow-x:auto;position:relative}
 .grid{display:flex;gap:3px;padding-bottom:4px}.gcol{display:flex;flex-direction:column;gap:3px;flex:1 1 auto}.gcell{width:11px;height:11px;border-radius:3px;background:var(--g0)}
+.grid.filtered .gcell{width:auto;height:11px}
 @media(max-width:520px){.gcell{width:9px;height:9px}}
 .act-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:18px;padding-top:16px;border-top:1px solid var(--line-2)}
 .act-stats .n{font-family:var(--disp);font-weight:700;font-size:22px}.act-stats .l{font-family:var(--mono);font-size:9px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-top:2px}
@@ -244,7 +246,7 @@ footer{border-top:1px solid var(--line);margin-top:40px;padding:26px 0 70px}
 .hm-months span{position:absolute;font-family:var(--mono);font-size:9.5px;color:var(--muted)}
 .hm-scrub{display:flex;align-items:center;gap:12px;margin-top:10px}
 .hm-scrub-l{font-family:var(--mono);font-size:10px;color:var(--muted);white-space:nowrap}
-.hm-scrub input[type=range]{flex:1;accent-color:var(--accent);height:4px}
+.hm-scrub input[type=range]{flex:1;accent-color:var(--muted);height:4px}
 .hm-tip{position:absolute;z-index:30;background:var(--ink);color:#fff;border-radius:9px;padding:9px 12px;font-family:var(--mono);font-size:10.5px;line-height:1.7;max-width:230px;pointer-events:none;box-shadow:0 4px 14px rgba(35,33,28,.25)}
 .hm-tip b{color:#fff}
 section{position:relative}
@@ -472,11 +474,8 @@ section>h2:first-child{margin-top:0}
   .pd-ev{margin-bottom:3px}
   /* Full PDFs expand every collapsible (JS opens them; keep markers clean) */
   details .seemore{display:none}
-  /* Snapshot = the first-view numbers only */
-  body.pdf-snapshot .snap-hide{display:none!important}
-  body.pdf-snapshot .print-dims{display:none}
-  body.pdf-snapshot details .cdet{display:none}
-  body.pdf-snapshot hr.div{display:none}
+  /* Profile PDF: show all visible content, only hide the print-only dims block */
+  body.pdf-profile .print-dims{display:none}
 }
 
 /* Run modes card */

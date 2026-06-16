@@ -8,7 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/static/css/profile.css?v=0.4.10">
+<link rel="stylesheet" href="/static/css/profile.css?v=0.4.11">
 <link rel="stylesheet" href="/static/css/tabs-shared.css?v=0.3.25">
 </head>
 <body>
@@ -69,6 +69,11 @@
       <div class="donut-row" id="pfSurfaceDonuts"></div>
       <div class="act-head">
         <span class="pill" id="pfActPill"></span>
+        <div class="seg act-filter" id="pfActFilter">
+          <button class="seg-b on" onclick="actFilter('all')">All</button>
+          <button class="seg-b" onclick="actFilter('30d')">30d</button>
+          <button class="seg-b" onclick="actFilter('7d')">7d</button>
+        </div>
         <span class="act-legend">
           <i style="background:var(--hm-ai)"></i> AI-heavy
           <i style="background:var(--hm-mix)"></i> Mixed
@@ -134,8 +139,8 @@
   </footer>
 </div>
 
-<script src="/static/js/icons.js?v=0.3.21"></script>
-<script src="/static/js/tabs-shared.js?v=0.3.24"></script>
-<script src="/static/js/profile.js?v=0.4.9" defer></script>
+<script src="/static/js/icons.js?v=0.3.22"></script>
+<script src="/static/js/tabs-shared.js?v=0.3.25"></script>
+<script src="/static/js/profile.js?v=0.4.10" defer></script>
 </body>
 </html>

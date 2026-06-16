@@ -795,6 +795,7 @@ async function init(){
     }).catch(function(){});
   }
   initPdfStyle('repPdfStyle');
+  nmaMaybeAutoPrint();
 
   // Live indicator — disabled (post-launch).
   // if(window._servedMode){
