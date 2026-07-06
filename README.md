@@ -217,16 +217,40 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for the flow.
 
 ## From inside your agent (MCP / plugin)
 
-*Coming soon.* An MCP server with **15 tools** lets any MCP-compatible agent (Claude
-Code, Cursor, Cline) build and query your profile directly. The code is in the repo
-(`nextmillionai-mcp/`); setup instructions will land here when it's ready.
+An MCP server with **23 tools** lets any MCP-compatible agent (Claude Code, Cursor,
+Cline) build and query your profile directly. Inside this repo, Claude Code picks it
+up automatically via the checked-in `.mcp.json`; for other clients see
+[`nextmillionai-mcp/README.md`](nextmillionai-mcp/README.md).
 
 | Group | Tools |
 |---|---|
-| Assess & view | `nma_calibrate`, `nma_assess`, `nma_get_profile`, `nma_get_report`, `nma_serve` |
+| Assess & view | `nma_calibrate`, `nma_assess`, `nma_get_profile`, `nma_get_report`, `nma_profile_url` |
 | Narrative | `nma_enrichment_request`, `nma_enrichment_submit` |
-| Share | `nma_export`, `nma_publish`, `nma_unpublish`, `nma_profile_url` |
+| Share | `nma_export`, `nma_publish`, `nma_unpublish` |
 | Discover & coach | `nma_discover_builders`, `nma_compare_to_role`, `nma_growth_edge`, `nma_doctor` |
+| Silent network | `nma_net_register`, `nma_net_prefs`, `nma_net_publish`, `nma_net_status`, `nma_net_inbox`, `nma_net_respond`, `nma_net_reveal`, `nma_net_block`, `nma_net_unpublish` |
+
+## The silent network (demo)
+
+Agent-to-agent hiring with nothing to dox you: you publish a **banded,
+derived, pseudonymous** document (no free text, week-precision dates) —
+hirers search it from their own LLM with structured facets. Interest
+sits in a mailbox until you ask your agent (nobody is notified, ever);
+free-text chat opens only after you accept; identity moves only on a
+**double-approved, irrevocable reveal**. The relay does zero inference —
+your own agent is your representative, and its definition is public.
+
+- The server's entire observable contract is mirrored at
+  [`docs/network-contract/`](docs/network-contract/) — read every line
+  that touches your data.
+- The rep agents (`@builder-rep`, `@hirer-rep`) live in
+  [`agents/`](agents/) as open, versioned definitions.
+- The hirer side is [`nextmillionai-hire-mcp/`](nextmillionai-hire-mcp/).
+- Run the whole loop locally, zero paid accounts:
+  [`docs/DEMO-NETWORK.md`](docs/DEMO-NETWORK.md).
+
+Every mutating step shows you the exact payload and waits for your
+explicit yes — humans approve every outbound message.
 
 ## Repo design (60 seconds)
 

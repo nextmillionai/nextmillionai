@@ -48,6 +48,8 @@ machine and what the server stores without trusting anyone.
 | [`network-contract/network_profile.v1.json`](network-contract/network_profile.v1.json) · [`network-contract/envelopes.v1.json`](network-contract/envelopes.v1.json) | The only payloads that exist on the network (JSON Schema). |
 | [`network-contract/openapi.yaml`](network-contract/openapi.yaml) | Endpoints, methods, status codes. |
 | [`network-contract/HANDOFF.md`](network-contract/HANDOFF.md) | Client-integration brief: auth, endpoint map, what clients must enforce. |
+| [`DEMO-NETWORK.md`](DEMO-NETWORK.md) | The end-to-end demo: both MCP servers + rep agents, incl. a double-approved reveal. |
+| [`../agents/AGENTS.md`](../agents/AGENTS.md) | The rep agents: embedding contract, layered guardrails, porting note. |
 
 ## How it reads your data (privacy & coverage)
 

@@ -79,8 +79,8 @@ built strictly against it and enforce what the server can't:
 Config: `NMA_NET_BASE` (default `http://127.0.0.1:7750`); identity is
 stored at `~/.nextmillionai/network/identity.json` by
 `nma_net_register`, or supplied via `NMA_NET_BUILDER_ID` /
-`NMA_NET_TOKEN` for demo identities. The end-to-end walkthrough lives
-at `docs/DEMO-NETWORK.md`.
+`NMA_NET_TOKEN` for demo identities. The end-to-end walkthrough is
+[`docs/DEMO-NETWORK.md`](../docs/DEMO-NETWORK.md).
 
 ## Privacy
 

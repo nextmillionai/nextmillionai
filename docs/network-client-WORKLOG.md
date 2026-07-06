@@ -193,3 +193,27 @@ wording, so they survive AGENT.md edits. YAML parse-validated (13+13);
 Makefile target fails informatively without a key and calls promptfoo
 via npx (no new dependency). Privacy: cases contain only fictional
 pseudonyms/payloads. Gates: 655 green. Verdict: **APPROVE**.
+
+### Commit 7 — docs(network): DEMO-NETWORK.md + README surfaces + CHANGELOG
+
+Scope: the end-to-end walkthrough (`docs/DEMO-NETWORK.md`), a silent-
+network section + 23-tool table in the root README, docs-map rows,
+CHANGELOG Unreleased entry, index registrations. **Verified live before
+writing:** an MCP stdio driver exercised both servers against the
+seeded relay — 18/18 steps passed (search with watermark, interest
+dry-run + confirmed, pull inbox, relay 409 on MESSAGE-before-accept,
+approval-carded accept/messages with the v0 honesty note, reveal
+request → first approval (nothing moves) → second approval delivering
+both contact cards, agent log render) — plus the fresh-identity loop
+(register approval card → console code → verify → publish refused
+without prefs → prefs → dry-run with identifiability warnings →
+widened publish → status → hard-delete unpublish) in an isolated
+NEXTMILLIONAI_HOME.
+
+**APE review:** Scope matches Prompt B §3D: the demo doc documents only
+verified behavior (each claim was executed this session), includes the
+sample MCP config JSON, and stays inside the public contract. Privacy:
+no personal paths, no tokens, backend referenced generically as the
+private repo; README copy is promise-driven with zero ranking language.
+Naming and voice match the existing README (blunt, no hype). Gates: 655
+green with all docs staged. Verdict: **APPROVE**.

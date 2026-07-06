@@ -69,4 +69,5 @@ approves and issues your bearer token. Configure any MCP client:
 | `nma_hire_reveal` | Double-opt-in reveal: request / approve, irreversibility stated in plain words. |
 
 A ready-made hirer rep agent that drives these tools honestly lives at
-`agents/hirer-rep/` — the end-to-end demo is `docs/DEMO-NETWORK.md`.
+[`agents/hirer-rep/`](../agents/hirer-rep/) — the end-to-end demo is
+[`docs/DEMO-NETWORK.md`](../docs/DEMO-NETWORK.md).
