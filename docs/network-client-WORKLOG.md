@@ -67,6 +67,11 @@ message — no auto-ACKs; no core-engine or core-schema changes.
    contract `agent_harness_builder`). The client maps deterministically
    (see D-C1); the two vocabularies should be reconciled or the mapping
    documented contract-side.
+5. **Mailbox MESSAGE `body` shape is undocumented.** HANDOFF.md lists
+   `messages[]` items as `{seq, from, type, body, at}` but does not say
+   MESSAGE bodies arrive as `{text: "…"}` objects (only CONTACT_CARD's
+   object shape is documented). Found live: both clients rendered
+   `[object Object]` until fixed. Pin the shape in the contract.
 
 ---
 
@@ -217,3 +222,19 @@ no personal paths, no tokens, backend referenced generically as the
 private repo; README copy is promise-driven with zero ranking language.
 Naming and voice match the existing README (blunt, no hype). Gates: 655
 green with all docs staged. Verdict: **APPROVE**.
+
+### Commit 8 — fix(mcp): render MESSAGE bodies from the relay's object shape
+
+Scope: found by running the full loop live through both MCP servers —
+mailbox MESSAGE bodies arrive as `{text: "…"}` objects (undocumented;
+filed as CONTRACT-CHANGE-NEEDED #5), so both thread renderers printed
+`[object Object]`. One-line fix in each `renderConversation`
+(string-or-object tolerant), re-verified live on both packages against
+a real thread.
+
+**APE review:** Minimal targeted fix at the render layer only; no
+payloads, endpoints, or consent flow touched — privacy surface
+unchanged (grep: no new logging/sending). The tolerant read
+(`typeof m.body === 'string' ? … : m.body?.text`) survives the contract
+being pinned either way. Gates: 655 green; live re-render verified on
+builder and hirer sides. Verdict: **APPROVE**.

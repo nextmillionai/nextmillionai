@@ -130,7 +130,9 @@ function renderConversation(c, { full = false } = {}) {
       if (b.builder) out += `     builder: ${b.builder.display_name || '(no name given)'} <${b.builder.email}>\n`;
       if (b.hirer) out += `     hirer:   ${b.hirer.display_name || '(no name given)'} <${b.hirer.email}> @ ${b.hirer.company_domain}\n`;
     } else {
-      out += `  #${m.seq} ${m.from}: ${m.body}\n`;
+      // MESSAGE body arrives as {text: "…"} (observed relay shape)
+      const bodyText = typeof m.body === 'string' ? m.body : m.body?.text ?? JSON.stringify(m.body);
+      out += `  #${m.seq} ${m.from}: ${bodyText}\n`;
     }
   }
   if (!full && messages.length > 3) out += `  (… ${messages.length - 3} earlier message(s))\n`;
