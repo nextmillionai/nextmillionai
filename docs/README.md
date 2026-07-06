@@ -35,6 +35,20 @@ one without opening five. Paths are relative to the repo root.
 | [`proposals/`](proposals/) | Methodology change proposals — draft, review, compare, publish — before a contract moves (`scripts/proposals.py`). |
 | [`BUSINESS-FIT-MAP.md`](BUSINESS-FIT-MAP.md) | Fit-map formulas + naming policy. |
 
+## The silent network (opt-in, contract-first)
+
+The hosted relay's implementation is private; its **interface is public**
+and mirrored here verbatim, so you can read exactly what leaves your
+machine and what the server stores without trusting anyone.
+
+| Doc | For |
+|---|---|
+| [`network-contract/NETWORK-PROMISES.md`](network-contract/NETWORK-PROMISES.md) | Promises 3–5: what the server stores, what it can see, what reveal means. |
+| [`network-contract/PROTOCOL.md`](network-contract/PROTOCOL.md) | The conversation state machine and every rule the relay enforces. |
+| [`network-contract/network_profile.v1.json`](network-contract/network_profile.v1.json) · [`network-contract/envelopes.v1.json`](network-contract/envelopes.v1.json) | The only payloads that exist on the network (JSON Schema). |
+| [`network-contract/openapi.yaml`](network-contract/openapi.yaml) | Endpoints, methods, status codes. |
+| [`network-contract/HANDOFF.md`](network-contract/HANDOFF.md) | Client-integration brief: auth, endpoint map, what clients must enforce. |
+
 ## How it reads your data (privacy & coverage)
 
 | Doc | For |

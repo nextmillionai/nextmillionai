@@ -1,0 +1,155 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://nextmillionai.org/contracts/envelopes.v1.json",
+  "title": "envelopes.v1",
+  "description": "Every message that transits the relay is one of these typed envelopes. The server stores and forwards them; it never generates, rewrites, or interprets content (zero server-side inference). MESSAGE.text is the only free-text field in the whole network and it is end-user-authored (or drafted by the user's own local agent and explicitly approved by the user before sending — the MCP tool contract mandates showing the draft). v0 HONESTY: MESSAGE bodies are visible to the server; E2E encryption is a fast-follow. The post-reveal enrichment-narrative attachment is a RESERVED envelope type (see PROTOCOL.md) and does not exist in v0.",
+  "$defs": {
+    "conversation_id": {
+      "type": "string",
+      "pattern": "^c_[0-9a-f]{16}$"
+    },
+    "builder_id": {
+      "type": "string",
+      "pattern": "^b_[0-9a-f]{16}$"
+    },
+    "hirer_id": {
+      "type": "string",
+      "pattern": "^h_[0-9a-f]{16}$"
+    },
+    "role_card": {
+      "description": "The structured 'job post' inside an INTEREST. Company NAME is deliberately absent — pre-reveal, a hirer is exactly as pseudonymous as a builder (size + sector only). No free text.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["title", "remote", "company_size", "company_sector"],
+      "properties": {
+        "title": {
+          "type": "string",
+          "enum": [
+            "ai_engineer",
+            "software_engineer",
+            "platform_engineer",
+            "founding_engineer",
+            "staff_engineer",
+            "engineering_manager",
+            "consultant_fractional"
+          ]
+        },
+        "comp_band": {
+          "description": "OPTIONAL banded annual compensation, USD-equivalent, gross. Coarse by design.",
+          "type": "string",
+          "enum": [
+            "<50k", "50k-100k", "100k-150k", "150k-250k", "250k+",
+            "unspecified"
+          ]
+        },
+        "remote": {
+          "type": "string",
+          "enum": ["remote", "hybrid", "onsite"]
+        },
+        "company_size": {
+          "type": "string",
+          "enum": ["1-10", "11-50", "51-200", "201-1000", "1000+"]
+        },
+        "company_sector": {
+          "type": "string",
+          "enum": [
+            "ai_infrastructure", "developer_tools", "fintech",
+            "healthtech", "commerce", "enterprise_saas", "consumer",
+            "deep_tech", "agency_consultancy", "other"
+          ]
+        }
+      }
+    }
+  },
+  "oneOf": [
+    {
+      "title": "INTEREST",
+      "description": "Hirer → builder. Creates a conversation in state `interested`. Quota-enforced (10/day/hirer in v0).",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type", "builder_id", "role_card"],
+      "properties": {
+        "type": { "const": "INTEREST" },
+        "builder_id": { "$ref": "#/$defs/builder_id" },
+        "role_card": { "$ref": "#/$defs/role_card" }
+      }
+    },
+    {
+      "title": "ACCEPT_CHAT",
+      "description": "Builder only, from `interested`. Opens free-text messaging — the builder's attention is opt-in, not just their identity.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type", "conv"],
+      "properties": {
+        "type": { "const": "ACCEPT_CHAT" },
+        "conv": { "$ref": "#/$defs/conversation_id" }
+      }
+    },
+    {
+      "title": "DECLINE",
+      "description": "Builder only, from `interested`. Terminal.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type", "conv"],
+      "properties": {
+        "type": { "const": "DECLINE" },
+        "conv": { "$ref": "#/$defs/conversation_id" }
+      }
+    },
+    {
+      "title": "MESSAGE",
+      "description": "Both sides, ONLY in state `active`. ≤2000 chars. Server-visible in v0 (stated plainly in NETWORK-PROMISES.md).",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type", "conv", "text"],
+      "properties": {
+        "type": { "const": "MESSAGE" },
+        "conv": { "$ref": "#/$defs/conversation_id" },
+        "text": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2000
+        }
+      }
+    },
+    {
+      "title": "REVEAL_REQUEST",
+      "description": "Either side, from `active`. Moves the conversation to `reveal_pending`. Does NOT count as the requester's approval — approval is a separate explicit act by each side.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type", "conv"],
+      "properties": {
+        "type": { "const": "REVEAL_REQUEST" },
+        "conv": { "$ref": "#/$defs/conversation_id" }
+      }
+    },
+    {
+      "title": "REVEAL_APPROVE",
+      "description": "Each side, in `reveal_pending`. The consent event. Irrevocable once BOTH sides have approved (fulfillment is immediate on the second approval). The contact-card email is the vault's verified email — it cannot be substituted here; display_name is the only approval-time field.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type", "conv"],
+      "properties": {
+        "type": { "const": "REVEAL_APPROVE" },
+        "conv": { "$ref": "#/$defs/conversation_id" },
+        "display_name": {
+          "description": "Optional human name to put on the contact card.",
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 80
+        }
+      }
+    },
+    {
+      "title": "WITHDRAW",
+      "description": "Either side, from any non-terminal state (`interested`, `active`, `reveal_pending`). Terminal. Withdrawing before reveal fulfillment cancels the reveal.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type", "conv"],
+      "properties": {
+        "type": { "const": "WITHDRAW" },
+        "conv": { "$ref": "#/$defs/conversation_id" }
+      }
+    }
+  ]
+}

@@ -1,0 +1,508 @@
+openapi: 3.1.0
+info:
+  title: nextmillionai silent network
+  version: 0.1.0
+  description: 'Public HTTP contract of the nextmillionai silent network.
+
+    Request/response payload shapes are governed by the JSON Schemas in this
+
+    directory (network_profile.v1.json, envelopes.v1.json) and the rules in
+
+    PROTOCOL.md — those files, not this spec, are authoritative for payload
+
+    validation. Auth (v0): bearer tokens. PRODUCTION: Ed25519-signed envelopes.'
+paths:
+  /v1/health:
+    get:
+      summary: Liveness check.
+      operationId: health_v1_health_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+  /v1/builders:
+    post:
+      summary: Register a builder (email + pubkey placeholder). Demo mode prints the verification code
+        to the server console.
+      operationId: register_builder_v1_builders_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              additionalProperties: true
+              type: object
+              title: Body
+        required: true
+      responses:
+        '201':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /v1/builders/verify:
+    post:
+      summary: Confirm the verification code; returns the builder's bearer token.
+      operationId: verify_builder_v1_builders_verify_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              additionalProperties: true
+              type: object
+              title: Body
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /v1/profiles/{builder_id}:
+    put:
+      summary: Publish or update a network_profile.v1 document (schema-validated; unknown keys rejected).
+        Owner-only.
+      operationId: put_profile_v1_profiles__builder_id__put
+      parameters:
+      - name: builder_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Builder Id
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Authorization
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+              title: Body
+      responses:
+        '204':
+          description: Successful Response
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    delete:
+      summary: Unpublish = HARD delete of profile, vault row, conversations, and registration. Owner-only.
+        Irreversible.
+      operationId: delete_profile_v1_profiles__builder_id__delete
+      parameters:
+      - name: builder_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Builder Id
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Authorization
+      responses:
+        '204':
+          description: Successful Response
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /v1/pool/histograms:
+    get:
+      summary: Anonymized band distributions of the published pool (for the client-side identifiability
+        check). Unauthenticated.
+      operationId: pool_histograms_v1_pool_histograms_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+  /v1/hirers:
+    post:
+      summary: Register a hirer (work email + company domain; free-mail domains rejected). Status starts
+        'pending'; token issued by the operator on manual approval.
+      operationId: register_hirer_v1_hirers_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              additionalProperties: true
+              type: object
+              title: Body
+        required: true
+      responses:
+        '201':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /v1/search:
+    get:
+      summary: Structured facet search (approved hirers only). Max 10 cards per page, paginated, watermarked
+        with the requesting hirer id.
+      operationId: search_v1_search_get
+      parameters:
+      - name: signal_clarity_min
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Signal Clarity Min
+      - name: build_stability_min
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Build Stability Min
+      - name: decision_weight_min
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Decision Weight Min
+      - name: recovery_velocity_min
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Recovery Velocity Min
+      - name: context_command_min
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Context Command Min
+      - name: orchestration_range_min
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Orchestration Range Min
+      - name: crafts
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: array
+            items:
+              type: string
+          - type: 'null'
+          title: Crafts
+      - name: stack_tags
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: array
+            items:
+              type: string
+          - type: 'null'
+          title: Stack Tags
+      - name: availability
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Availability
+      - name: tz_band
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Tz Band
+      - name: remote
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Remote
+      - name: archetype
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Archetype
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+          default: 0
+          title: Page
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Authorization
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /v1/interests:
+    post:
+      summary: 'Send an INTEREST with a structured role card; creates a conversation in state ''interested''.
+        Quota: 10/day/hirer.'
+      operationId: create_interest_v1_interests_post
+      parameters:
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Authorization
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+              title: Body
+      responses:
+        '201':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /v1/mailbox:
+    get:
+      summary: 'Pull-based mailbox: every conversation the caller is party to, with messages and the state-transition
+        event log.'
+      operationId: mailbox_v1_mailbox_get
+      parameters:
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Authorization
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /v1/messages:
+    post:
+      summary: Relay an ACCEPT_CHAT / DECLINE / MESSAGE / REVEAL_REQUEST / WITHDRAW envelope (envelopes.v1).
+        State machine enforced; MESSAGE only in 'active'.
+      operationId: post_message_v1_messages_post
+      parameters:
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Authorization
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+              title: Envelope
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /v1/reveals/{conv_id}:
+    post:
+      summary: 'Approve reveal for one side (optional display_name captured now). Fulfills on the second
+        approval: contact cards delivered, irrevocable.'
+      operationId: approve_reveal_v1_reveals__conv_id__post
+      parameters:
+      - name: conv_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Conv Id
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Authorization
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+              title: Body
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /v1/blocks:
+    post:
+      summary: 'Builder blocks a hirer: open conversations withdrawn, future INTERESTs silently dropped.'
+      operationId: block_v1_blocks_post
+      parameters:
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Authorization
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+              title: Body
+      responses:
+        '204':
+          description: Successful Response
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+components:
+  schemas:
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+        input:
+          title: Input
+        ctx:
+          type: object
+          title: Context
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError

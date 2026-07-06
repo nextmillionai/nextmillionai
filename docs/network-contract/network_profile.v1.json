@@ -1,0 +1,204 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://nextmillionai.org/contracts/network_profile.v1.json",
+  "title": "network_profile.v1",
+  "description": "The ONLY payload a builder's machine sends to the silent network at publish time. Derived-only, banded, pseudonymous. No free-text fields anywhere; timestamps at week precision; counts as bands; every enum is a controlled vocabulary. The server rejects unknown keys at every level (additionalProperties: false) and the client must too — belt and suspenders.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "builder_id",
+    "methodology_version",
+    "dimensions",
+    "archetype",
+    "crafts",
+    "evidence",
+    "stack_tags",
+    "availability",
+    "prefs",
+    "published_at_week"
+  ],
+  "properties": {
+    "schema": {
+      "const": "network_profile.v1"
+    },
+    "builder_id": {
+      "description": "Pseudonymous builder id issued at registration. v0: server-issued opaque id. PRODUCTION: Ed25519 public-key fingerprint.",
+      "type": "string",
+      "pattern": "^b_[0-9a-f]{16}$"
+    },
+    "methodology_version": {
+      "description": "Version of the public scoring methodology these bands were computed under. Ties every band to auditable public arithmetic.",
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+(\\.[0-9]+)?$"
+    },
+    "dimensions": {
+      "description": "The six public dimensions, as band labels from the open methodology (scoring is plain arithmetic on the user's machine; no model writes a score). Band ids match the OSS engine's public level vocabulary.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "signal_clarity",
+        "build_stability",
+        "decision_weight",
+        "recovery_velocity",
+        "context_command",
+        "orchestration_range"
+      ],
+      "properties": {
+        "signal_clarity": { "$ref": "#/$defs/dimension_band" },
+        "build_stability": { "$ref": "#/$defs/dimension_band" },
+        "decision_weight": { "$ref": "#/$defs/dimension_band" },
+        "recovery_velocity": { "$ref": "#/$defs/dimension_band" },
+        "context_command": { "$ref": "#/$defs/dimension_band" },
+        "orchestration_range": { "$ref": "#/$defs/dimension_band" }
+      }
+    },
+    "archetype": {
+      "description": "Dominant builder archetype, from the public taxonomy (TAXONOMY.md).",
+      "type": "string",
+      "enum": [
+        "agent_builder",
+        "integration_architect",
+        "multi_agent_orchestrator",
+        "context_engineer",
+        "automation_engineer",
+        "system_thinker",
+        "rapid_prototyper",
+        "code_weaver",
+        "cli_native"
+      ]
+    },
+    "crafts": {
+      "description": "Verified crafts, from the public taxonomy. Max 4.",
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 4,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "enum": [
+          "agent_harness_builder",
+          "integration_mcp_engineer",
+          "multi_agent_orchestrator",
+          "context_engineer",
+          "eval_driven_builder",
+          "production_guardian",
+          "ai_product_engineer",
+          "system_architect",
+          "rapid_prototyper",
+          "code_weaver",
+          "model_trainer",
+          "data_pipeline_engineer",
+          "model_router"
+        ]
+      }
+    },
+    "evidence": {
+      "description": "Quantitative evidence, mandatorily banded. Never exact counts, never exact dates — bands are the de-anonymization mitigation.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "session_hours_band",
+        "ai_loc_survived_band",
+        "tools_verified",
+        "history_span_band",
+        "confidence"
+      ],
+      "properties": {
+        "session_hours_band": {
+          "type": "string",
+          "enum": ["<30", "30-100", "100-300", "300-1000", "1000+"]
+        },
+        "ai_loc_survived_band": {
+          "type": "string",
+          "enum": ["<1k", "1k-10k", "10k-50k", "50k-200k", "200k+"]
+        },
+        "tools_verified": {
+          "description": "Count of independent data sources that corroborated the profile. Small integer, capped — not identifying.",
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 10
+        },
+        "history_span_band": {
+          "type": "string",
+          "enum": ["<1mo", "1-3mo", "3-6mo", "6-12mo", "12mo+"]
+        },
+        "confidence": {
+          "description": "Engine confidence, two decimals max.",
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "multipleOf": 0.01
+        }
+      }
+    },
+    "stack_tags": {
+      "description": "Dominant stack, controlled vocabulary, max 5.",
+      "type": "array",
+      "minItems": 0,
+      "maxItems": 5,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "enum": [
+          "python", "typescript", "javascript", "go", "rust", "java",
+          "kotlin", "swift", "c", "cpp", "csharp", "ruby", "php",
+          "elixir", "scala", "sql", "shell", "html_css", "terraform",
+          "kubernetes"
+        ]
+      }
+    },
+    "availability": {
+      "type": "string",
+      "enum": ["open", "passive", "paused"]
+    },
+    "prefs": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["roles", "remote", "tz_band"],
+      "properties": {
+        "roles": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 3,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "enum": [
+              "ai_engineer",
+              "software_engineer",
+              "platform_engineer",
+              "founding_engineer",
+              "staff_engineer",
+              "engineering_manager",
+              "consultant_fractional"
+            ]
+          }
+        },
+        "remote": {
+          "type": "boolean"
+        },
+        "tz_band": {
+          "description": "Coarse timezone band, deliberately wide (identifiability mitigation).",
+          "type": "string",
+          "enum": [
+            "UTC-12..-8", "UTC-8..-4", "UTC-4..0",
+            "UTC+0..+3", "UTC+3..+7", "UTC+7..+12"
+          ]
+        }
+      }
+    },
+    "published_at_week": {
+      "description": "ISO week only — never a precise timestamp.",
+      "type": "string",
+      "pattern": "^[0-9]{4}-W(0[1-9]|[1-4][0-9]|5[0-3])$"
+    }
+  },
+  "$defs": {
+    "dimension_band": {
+      "description": "Ordered band vocabulary, identical to the OSS engine's public score levels (lowest to highest).",
+      "type": "string",
+      "enum": ["emerging", "developing", "proficient", "advanced", "elite"]
+    }
+  }
+}
