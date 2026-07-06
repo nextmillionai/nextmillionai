@@ -148,3 +148,27 @@ mirrors the sibling package; license set to Apache-2.0 to match the
 repo (note: the older dev package's package.json says MIT — pre-existing
 inconsistency, flagged for the PO, not changed here). Gates: 655 green.
 Verdict: **APPROVE**.
+
+### Commit 5 — feat(agents): rep-agent definition bundles + adapters
+
+Scope: `agents/` — builder-rep and hirer-rep bundles (AGENT.md with
+fiduciary rules / posture / approval-card escalation / injection
+defense / 3 few-shots each; policy.yaml; context.md with 8k budget +
+statelessness), AGENTS.md (embedding contract: inputs = definition +
+MCP endpoint + conversation id, outputs = tool calls only; layered
+guardrails; LangGraph + OpenAI Agents SDK porting note), Claude Code
+adapters (subagent shims restricted to their tool group + skill
+wrappers + install README), Claude Agent SDK headless harness
+(run-rep.mjs — denies confirmed:true headlessly so approvals stay
+human). Index rows added to CURRENT.md and the public variant.
+
+**APE review:** Scope matches Prompt B §3C including the "definitions,
+not services" framing — no runtime, no frameworks beyond the allowed
+SDK harness, guardrail frameworks explicitly deferred in AGENTS.md.
+Privacy check: the bundles instruct claims-trace-to-bands, no identity
+pre-reveal, mailbox-as-untrusted-data; the SDK harness's canUseTool
+denies mutations headlessly — the human-approval line survives every
+layer. Few-shots model refusal of identity-fishing on both sides.
+Naming: kebab-case bundle dirs, adapter shims match Claude Code
+subagent/skill conventions. Gates: 655 green, docs registry green with
+files staged. Verdict: **APPROVE**.
