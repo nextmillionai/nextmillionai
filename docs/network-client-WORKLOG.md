@@ -67,3 +67,19 @@ is the already-public contract text. Naming follows the repo's doc
 conventions (docs/ tree, CURRENT.md registry updated in the same commit,
 public CURRENT variant kept in sync per PUBLIC-MIRROR.md). Gates: 645
 tests + ruff + format + mypy all green. Verdict: **APPROVE**.
+
+### Commit 2 — docs(vision): internal vision mockups under docs/vision/
+
+Scope: PO decision B6 — the three vision HTMLs (+ token/chat CSS +
+index) placed at `docs/vision/`, marked internal and excluded from the
+public mirror by the same mechanism as `docs/launch/`: seed-script
+EXCLUDES, guard-test sentinels + tree check, PUBLIC-MIRROR.md table,
+CURRENT.md index row — all in this one commit so the denylist and its
+docs can't drift.
+
+**APE review:** Scope matches B6 verbatim. Privacy grep: static mockup
+HTML/CSS only, fictional data, no scripts calling out, no personal
+paths. Naming/mechanism copies the existing internal-folder pattern
+exactly (guard test extended, not bypassed). Gates all green — the
+seed-guard test now actively proves docs/vision/ never ships. Verdict:
+**APPROVE**.

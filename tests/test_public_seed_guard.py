@@ -58,6 +58,8 @@ INTERNAL_SENTINELS = [
     "docs/launch/AFTER-LAUNCH.md",
     "docs/launch/methodology-open-bundle.md",
     "docs/site/index.html",
+    "docs/vision/index.html",
+    "docs/vision/README.md",
     "docs/agents/WEBSITE.md",
     "netlify.toml",
     "scripts/seed-public.sh",
@@ -107,7 +109,7 @@ def test_no_internal_file_ships():
     leaked = [p for p in INTERNAL_SENTINELS if p in shipped]
     assert not leaked, f"internal files would ship to the public mirror: {leaked}"
     # whole internal trees gone, not just the sentinels
-    for tree in ("docs/launch/", "docs/site/", "docs/archive/"):
+    for tree in ("docs/launch/", "docs/site/", "docs/archive/", "docs/vision/"):
         survivors = [p for p in shipped if p.startswith(tree)]
         assert not survivors, f"{tree} should be fully excluded; survivors: {survivors}"
 
