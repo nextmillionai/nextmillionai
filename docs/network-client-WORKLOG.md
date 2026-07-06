@@ -47,7 +47,26 @@ message — no auto-ACKs; no core-engine or core-schema changes.
 
 ### CONTRACT-CHANGE-NEEDED (running list)
 
-*(none yet)*
+1. **`GET /v1/pool/histograms` response shape is undocumented.** The
+   contract (openapi.yaml) leaves the 200 body as an empty schema. The
+   client codes against the observed shape
+   `{pool_size, dimensions: {dim: {band: n}}, facets: {availability,
+   tz_band, archetype, crafts, stack_tags}}` — the identifiability
+   check depends on it, so it should be pinned in the contract.
+2. **`GET /v1/mailbox` top-level shape is undocumented.** HANDOFF.md
+   documents the per-conversation object but not the envelope; observed:
+   `{conversations: [...]}`. Should be pinned.
+3. **No single-profile view endpoint for hirers.** A hirer cannot fetch
+   one builder's card by id (search cards are the only card source).
+   `nma_hire_view` therefore re-scans search pages to find the id —
+   fine at demo scale, wrong at real scale. Proposal: a hirer-scoped
+   `GET /v1/profiles/{builder_id}` returning the same card as search.
+4. **Contract doc nit:** `network_profile.v1.json` says crafts come
+   "from the public taxonomy", but the OSS taxonomy's kind ids differ
+   from the contract's craft ids (e.g. engine `agent_builder` ↔
+   contract `agent_harness_builder`). The client maps deterministically
+   (see D-C1); the two vocabularies should be reconciled or the mapping
+   documented contract-side.
 
 ---
 
@@ -83,3 +102,27 @@ paths. Naming/mechanism copies the existing internal-folder pattern
 exactly (guard test extended, not bypassed). Gates all green — the
 seed-guard test now actively proves docs/vision/ never ships. Verdict:
 **APPROVE**.
+
+### Commit 3 — feat(mcp): nma_net_* developer-side network tools
+
+Scope: 9 tools in `nextmillionai-mcp/index.js` (register, prefs,
+publish, status, inbox, respond, reveal, block, unpublish); pure logic
+in `net-lib.js` (profile→network_profile.v1 mapping, subset JSON-Schema
+validator, identifiability check, widen); node:test suite (8 tests) +
+pytest layer pinning the consent contract; README + tool counts.
+Verified against the live local relay: the real profile builds a
+contract-valid doc, pool warnings fire, widen drops only optional
+facets.
+
+**APE review:** Scope matches Prompt B §3A + HANDOFF "what the client
+must enforce" — all five client obligations implemented (payload
+confirmation, identifiability-before-publish, reveal irreversibility
+wording, client-side schema validation, v0 honesty line). Privacy grep
+of the diff: the only fetch targets are `NMA_NET_BASE` (localhost
+default) and the existing registry constant; no logging of emails or
+message bodies; identity lives in a tool-owned
+`~/.nextmillionai/network/` namespace (the engine's data dir stays
+engine-written only — hardline respected); unmeasured signals refuse,
+never estimate. Naming matches the existing `nma_*` tool style and the
+terse-text response idiom. Gates: 653 tests + ruff + format + mypy
+green; node suite 8/8. Verdict: **APPROVE**.
