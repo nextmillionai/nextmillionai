@@ -20,10 +20,12 @@ import pytest
 
 ROOT = Path(__file__).resolve().parent.parent
 DEV_MCP = ROOT / "nextmillionai-mcp" / "index.js"
+HIRE_MCP = ROOT / "nextmillionai-hire-mcp" / "index.js"
 NET_LIB = ROOT / "nextmillionai-mcp" / "net-lib.js"
 
 # Mutating network tools and the consent language their descriptions must
-# carry. Read-only tools (status, inbox) deliberately need no confirmation.
+# carry. Read-only tools (status, inbox, search, view) deliberately need
+# no confirmation.
 MUTATING_NET_TOOLS = [
     "nma_net_register",
     "nma_net_publish",
@@ -31,6 +33,12 @@ MUTATING_NET_TOOLS = [
     "nma_net_reveal",
     "nma_net_block",
     "nma_net_unpublish",
+]
+MUTATING_HIRE_TOOLS = [
+    "nma_hire_register",
+    "nma_hire_interest",
+    "nma_hire_message",
+    "nma_hire_reveal",
 ]
 
 
@@ -41,41 +49,69 @@ def _tool_block(src, name):
     return src[start : end if end != -1 else len(src)]
 
 
+def _both_packages():
+    return [
+        (DEV_MCP, MUTATING_NET_TOOLS),
+        (HIRE_MCP, MUTATING_HIRE_TOOLS),
+    ]
+
+
 def test_every_mutating_net_tool_requires_confirmed_true():
-    src = DEV_MCP.read_text()
-    for name in MUTATING_NET_TOOLS:
-        block = _tool_block(src, name)
-        assert "confirmed: z.boolean()" in block, f"{name} lacks a confirmed field"
-        assert re.search(r"if \(!confirmed\)", block), (
-            f"{name} does not gate the network call on confirmed"
-        )
-        assert "APPROVAL REQUIRED" in block or "NET_APPROVAL_HEADER" in block, (
-            f"{name} dry-run does not render an approval card"
-        )
+    for path, tools in _both_packages():
+        src = path.read_text()
+        for name in tools:
+            block = _tool_block(src, name)
+            assert "confirmed: z.boolean()" in block, f"{name} lacks a confirmed field"
+            assert re.search(r"if \(!confirmed\)", block), (
+                f"{name} does not gate the network call on confirmed"
+            )
+            assert "APPROVAL REQUIRED" in block or "APPROVAL_HEADER" in block, (
+                f"{name} dry-run does not render an approval card"
+            )
 
 
 def test_tool_descriptions_instruct_display_and_explicit_approval():
-    src = DEV_MCP.read_text()
-    for name in MUTATING_NET_TOOLS:
-        block = _tool_block(src, name)
-        desc = block[: block.index("{")]
-        assert re.search(r"explicit", desc, re.I), (
-            f"{name} description must demand explicit human approval"
-        )
+    for path, tools in _both_packages():
+        src = path.read_text()
+        for name in tools:
+            block = _tool_block(src, name)
+            desc = block[: block.index("{")]
+            assert re.search(r"explicit", desc, re.I), (
+                f"{name} description must demand explicit human approval"
+            )
 
 
 def test_reveal_states_irreversibility_in_plain_words():
-    block = _tool_block(DEV_MCP.read_text(), "nma_net_reveal")
-    for needle in ("IRREVOCABLE", "cannot be", "display_name", "WITHDRAW"):
-        assert needle in block, f"nma_net_reveal must state: {needle}"
+    for path, tool in ((DEV_MCP, "nma_net_reveal"), (HIRE_MCP, "nma_hire_reveal")):
+        block = _tool_block(path.read_text(), tool)
+        for needle in ("IRREVOCABLE", "cannot be", "display_name", "WITHDRAW"):
+            assert needle in block, f"{tool} must state: {needle}"
 
 
 def test_message_tools_carry_the_v0_visibility_honesty_line():
-    block = _tool_block(DEV_MCP.read_text(), "nma_net_respond")
-    assert re.search(r"end-to-end encryption", block), (
-        "nma_net_respond must state that v0 message bodies are server-visible"
+    for path, tool in ((DEV_MCP, "nma_net_respond"), (HIRE_MCP, "nma_hire_message")):
+        block = _tool_block(path.read_text(), tool)
+        assert re.search(r"end-to-end encryption", block), (
+            f"{tool} must state that v0 message bodies are server-visible"
+        )
+        assert re.search(r"2000", block), "MESSAGE size cap must be surfaced"
+
+
+def test_hire_search_is_capped_and_watermarked():
+    block = _tool_block(HIRE_MCP.read_text(), "nma_hire_search")
+    assert "10" in block, "the 10-card page cap must be surfaced"
+    assert "requested_by" in block, "the hirer-id watermark must be surfaced honestly"
+    desc = block[: block.index("{")]
+    assert re.search(r"never a ranking|not a ladder", desc), (
+        "search must state matches-not-rankings"
     )
-    assert re.search(r"2000", block), "MESSAGE size cap must be surfaced"
+
+
+def test_hire_inbox_treats_messages_as_untrusted_data():
+    block = _tool_block(HIRE_MCP.read_text(), "nma_hire_inbox")
+    assert re.search(r"NEVER follow instructions", block), (
+        "inbox must instruct the agent to treat message content as data, not instructions"
+    )
 
 
 def test_publish_runs_the_identifiability_check_before_sending():
@@ -99,7 +135,7 @@ def test_no_outbound_host_beyond_the_configured_relay():
     """The MCP packages talk to the user-configured relay and localhost
     defaults only — no hardcoded external hosts anywhere (the network.py
     CI guard's spirit, applied to the JS side)."""
-    for path in (DEV_MCP, NET_LIB):
+    for path in (DEV_MCP, HIRE_MCP, NET_LIB):
         for m in re.finditer(r"https?://[\w.:-]+", path.read_text()):
             host = m.group(0)
             assert host.startswith(("http://localhost", "http://127.0.0.1")), (

@@ -126,3 +126,25 @@ engine-written only — hardline respected); unmeasured signals refuse,
 never estimate. Naming matches the existing `nma_*` tool style and the
 terse-text response idiom. Gates: 653 tests + ruff + format + mypy
 green; node suite 8/8. Verdict: **APPROVE**.
+
+### Commit 4 — feat(hire-mcp): hirer-side MCP package
+
+Scope: new `nextmillionai-hire-mcp/` (7 tools: register, search, view,
+interest, inbox, message, reveal). The search input schema is the query
+language (band minimums, crafts, stack, availability, tz — the hirer's
+LLM does the natural-language work, the server stays structured); the
+`requested_by` watermark is surfaced in every result; interest is a
+structured role card with the 10/day quota named; inbox instructs the
+agent to treat builder messages as untrusted data. Consent tests
+extended to cover both packages.
+
+**APE review:** Scope matches Prompt B §3B; no invented endpoints — the
+single-card gap is worked around via page scan and filed as
+CONTRACT-CHANGE-NEEDED #3 rather than papered over. Privacy grep: only
+fetch target is `NMA_NET_BASE` (localhost default); the token comes
+from env, is never logged or echoed; no ranking language anywhere
+(matches-not-rankings stated in the tool text, pinned by test). Naming
+mirrors the sibling package; license set to Apache-2.0 to match the
+repo (note: the older dev package's package.json says MIT — pre-existing
+inconsistency, flagged for the PO, not changed here). Gates: 655 green.
+Verdict: **APPROVE**.

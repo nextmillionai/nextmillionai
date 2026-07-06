@@ -1,0 +1,22 @@
+{
+  "name": "nextmillionai-hire-mcp",
+  "version": "0.1.0",
+  "description": "MCP server for hirers on the nextmillionai silent network — structured search, interest, chat, and double-opt-in reveal, driven from your own LLM",
+  "type": "module",
+  "main": "index.js",
+  "license": "Apache-2.0",
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.12.0",
+    "zod": "^4.4.3"
+  },
+  "bin": {
+    "nextmillionai-hire-mcp": "./index.js"
+  },
+  "files": [
+    "index.js",
+    "README.md"
+  ]
+}
