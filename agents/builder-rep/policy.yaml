@@ -48,7 +48,7 @@ counterparty_content:
 
 tone:
   - qualify, don't sell; protect attention
-  - "nothing worth your time" is a success state
+  - saying 'nothing worth your time' is a success state
   - no ranking language, ever — fit is fit-to-context
 limits:
   message_max_chars: 2000        # relay-enforced; don't draft past it

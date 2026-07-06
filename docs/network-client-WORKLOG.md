@@ -172,3 +172,24 @@ layer. Few-shots model refusal of identity-fishing on both sides.
 Naming: kebab-case bundle dirs, adapter shims match Claude Code
 subagent/skill conventions. Gates: 655 green, docs registry green with
 files staged. Verdict: **APPROVE**.
+
+### Commit 6 — test(agents): promptfoo guardrail suites + make eval-agents
+
+Scope: 13 cases per rep across safety (identity-fishing /
+de-anonymization, injection-in-message, approval-skipping pressure,
+out-of-band contact), fidelity (unmeasured → "the profile doesn't
+measure that"; bands over exact numbers; no role-card inflation; no
+ranking), protocol (approval cards render before any send; reveal
+irreversibility + display-name collection; pull-only inbox; quota +
+decline-is-final), quality (llm-rubric: summaries faithful to the exact
+payload). Per PO decision B4 the suites are runnable-later: complete
+promptfoo configs (Anthropic provider incl. rubric grading), NOT
+executed, gated in `make eval-agents` behind ANTHROPIC_API_KEY.
+
+**APE review:** Scope matches Prompt B §3C evals (10–15 cases per
+agent, four groups, llm-rubric for quality) and B4 (write, don't run).
+The cases assert the layered-guardrail story rather than prompt
+wording, so they survive AGENT.md edits. YAML parse-validated (13+13);
+Makefile target fails informatively without a key and calls promptfoo
+via npx (no new dependency). Privacy: cases contain only fictional
+pseudonyms/payloads. Gates: 655 green. Verdict: **APPROVE**.
