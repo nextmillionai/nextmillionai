@@ -266,6 +266,21 @@ nma-net publish                                     # banded/derived; --widen if
 nma-net status                                      # also: inbox, respond, reveal, unpublish (hard delete)
 ```
 
+**Preferences** are the *only* user-set fields (via `nma-net prefs`, or
+the same flags on `nma-net publish`). Everything else in the published
+profile — the six dimension bands, archetype, crafts, stack tags,
+evidence bands — is DERIVED from your local assessment and cannot be
+hand-set (unmeasured → refused, never estimated).
+
+| Flag | Values | Meaning |
+|---|---|---|
+| `--availability` | `open` · `passive` · `paused` | how discoverable you are |
+| `--roles` | 1–3 (comma-sep) of `ai_engineer`, `software_engineer`, `platform_engineer`, `founding_engineer`, `staff_engineer`, `engineering_manager`, `consultant_fractional` | roles you're open to |
+| `--remote` | `true` · `false` | remote-friendly |
+| `--tz` | `UTC-12..-8` · `UTC-8..-4` · `UTC-4..0` · `UTC+0..+3` · `UTC+3..+7` · `UTC+7..+12` | timezone band |
+
+Prefs are stored locally and take effect on the next `publish`.
+
 - The server's entire observable contract is mirrored at
   [`docs/network-contract/`](docs/network-contract/) — read every line
   that touches your data.
