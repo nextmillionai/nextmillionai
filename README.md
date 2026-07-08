@@ -259,8 +259,8 @@ python3 -m nextmillionai            # writes ~/.nextmillionai/data/profile.json
 #    NMA_NET_BASE only to point at a local/self-hosted one. Every mutating
 #    step prints the EXACT payload and waits for your typed "yes" (a pipe
 #    cannot consent).
-nma-net register --email you@example.org            # sends ONLY the email
-nma-net register --code 123456 --builder-id b_…     # code arrives in your inbox
+nma-net register --email you@example.org            # sends ONLY the email; code arrives in your inbox
+nma-net register --code 123456                      # builder id is remembered from step 1
 nma-net prefs --availability passive --roles ai_engineer --remote true --tz "UTC+3..+7"
 nma-net publish                                     # banded/derived; --widen if too identifiable
 nma-net status                                      # also: inbox, respond, reveal, unpublish (hard delete)
