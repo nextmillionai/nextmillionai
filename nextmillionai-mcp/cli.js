@@ -14,7 +14,8 @@
 //     unmeasured signals, contract-schema validation, identifiability
 //     warnings + widen
 // It talks ONLY to the configured relay (--base / NMA_NET_BASE,
-// default http://127.0.0.1:7750) — never anywhere else.
+// default https://network.nextmillionai.org) — never anywhere else.
+// Override the base for a local or self-hosted relay.
 
 import { mkdir, readFile, rm, writeFile } from 'node:fs/promises';
 import { homedir } from 'node:os';
@@ -51,7 +52,8 @@ const USAGE = `nma-net — the silent network, no MCP required
   nma-net block --hirer-id h_…
   nma-net unpublish                            HARD delete, type the builder id to confirm
 
-Relay: --base URL or NMA_NET_BASE (default http://127.0.0.1:7750).
+Relay: --base URL or NMA_NET_BASE (default https://network.nextmillionai.org;
+       override for a local or self-hosted relay).
 Profile source: the local engine assessment (${'~'}/.nextmillionai/data/profile.json) —
 generate it with the engine ("python3 -m nextmillionai" in your repo) first.`;
 
@@ -445,7 +447,7 @@ const { values: opts, positionals } = parseArgs({
 });
 
 const command = positionals[0];
-opts.base = (opts.base || process.env.NMA_NET_BASE || 'http://127.0.0.1:7750').replace(/\/$/, '');
+opts.base = (opts.base || process.env.NMA_NET_BASE || 'https://network.nextmillionai.org').replace(/\/$/, '');
 const net = makeFetcher(opts.base);
 
 try {

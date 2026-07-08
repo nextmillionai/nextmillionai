@@ -10,7 +10,8 @@
  * held to.
  *
  * Config (env):
- *   NMA_NET_BASE    relay base URL (default http://127.0.0.1:7750)
+ *   NMA_NET_BASE    relay base URL (default https://network.nextmillionai.org;
+ *                   override for a local/self-hosted relay)
  *   NMA_HIRE_TOKEN  hirer bearer token, issued by the operator after
  *                   manual approval of your work-email registration
  *
@@ -29,7 +30,7 @@ import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
 import { z } from 'zod';
 
-const NET_BASE = (process.env.NMA_NET_BASE || 'http://127.0.0.1:7750').replace(/\/$/, '');
+const NET_BASE = (process.env.NMA_NET_BASE || 'https://network.nextmillionai.org').replace(/\/$/, '');
 const TOKEN = process.env.NMA_HIRE_TOKEN || null;
 
 const text = (t) => ({ content: [{ type: 'text', text: t }] });

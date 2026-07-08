@@ -151,15 +151,20 @@ def test_unpublish_never_deletes_the_identity_file_for_env_identities():
 
 
 def test_no_outbound_host_beyond_the_configured_relay():
-    """The MCP packages talk to the user-configured relay and localhost
-    defaults only — no hardcoded external hosts anywhere (the network.py
-    CI guard's spirit, applied to the JS side)."""
+    """The MCP packages talk to the user-configured relay, localhost, and
+    the ONE sanctioned production relay only — no other hardcoded external
+    hosts (the network.py CI guard's spirit, applied to the JS side).
+
+    The production default is deliberate and reviewed: making the hosted
+    relay the out-of-the-box base is what removes the relay-setup step for
+    users (EPIC-1). Data still leaves only on an explicit, consented
+    identity action; the assessment never touches a server. NMA_NET_BASE
+    overrides it for a local or self-hosted relay."""
+    allowed = ("http://localhost", "http://127.0.0.1", "https://network.nextmillionai.org")
     for path in (DEV_MCP, HIRE_MCP, NET_LIB, ROOT / "nextmillionai-mcp" / "cli.js"):
         for m in re.finditer(r"https?://[\w.:-]+", path.read_text()):
             host = m.group(0)
-            assert host.startswith(("http://localhost", "http://127.0.0.1")), (
-                f"{path.name} hardcodes an external host: {host}"
-            )
+            assert host.startswith(allowed), f"{path.name} hardcodes an external host: {host}"
 
 
 def _node():

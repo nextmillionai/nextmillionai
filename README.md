@@ -254,12 +254,10 @@ cd nextmillionai/nextmillionai-mcp && npm link && cd ..
 #    is uploaded (unmeasured signals refuse to publish, never estimated).
 python3 -m nextmillionai            # writes ~/.nextmillionai/data/profile.json
 
-# 3. Point at a relay. Default is http://127.0.0.1:7750 — run one locally
-#    per docs/DEMO-NETWORK.md, or set the URL of a hosted relay.
-export NMA_NET_BASE=https://your-relay.example
-
-# 4. Join: register -> verify by email -> publish. Every mutating step
-#    prints the EXACT payload and waits for your typed "yes" (a pipe
+# 3. Join: register -> verify by email -> publish. No relay setup — the
+#    client defaults to the hosted relay (network.nextmillionai.org); set
+#    NMA_NET_BASE only to point at a local/self-hosted one. Every mutating
+#    step prints the EXACT payload and waits for your typed "yes" (a pipe
 #    cannot consent).
 nma-net register --email you@example.org            # sends ONLY the email
 nma-net register --code 123456 --builder-id b_…     # code arrives in your inbox

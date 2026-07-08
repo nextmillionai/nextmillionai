@@ -653,7 +653,7 @@ server.tool(
 // `confirmed: true` after explicit human approval — the server cannot
 // enforce that; this client does.
 
-const NET_BASE = (process.env.NMA_NET_BASE || 'http://127.0.0.1:7750').replace(/\/$/, '');
+const NET_BASE = (process.env.NMA_NET_BASE || 'https://network.nextmillionai.org').replace(/\/$/, '');
 const NET_DIR = join(USER_HOME, 'network');
 const NET_IDENTITY_PATH = join(NET_DIR, 'identity.json');
 const CONTRACT_DIR = join(REPO_ROOT, 'docs', 'network-contract');

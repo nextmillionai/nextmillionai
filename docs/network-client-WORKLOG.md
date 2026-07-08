@@ -333,3 +333,38 @@ CLI-local; every judgment call lives in net-lib, used by both
 frontends. Risk noted: the CLI and MCP approval texts can drift apart
 over time — acceptable now, revisit if a third frontend appears. Gates:
 pytest 668 + node suite, ruff, format, mypy green. Verdict: **APPROVE**.
+
+### Commit 14 — feat(client): default to the hosted relay (network.nextmillionai.org) — no relay setup
+
+Scope: the client hardcoded `http://127.0.0.1:7750` as the default base,
+so using the network meant standing up your own relay (or exporting
+NMA_NET_BASE). The default now points at the hosted relay
+`https://network.nextmillionai.org` in all three entry points
+(nextmillionai-mcp cli.js + index.js, nextmillionai-hire-mcp index.js);
+NMA_NET_BASE / --base still override for local or self-hosted. This is
+the payoff of the backend EPIC-1 work (rate-limited relay behind DNS +
+TLS): a cloned repo (or, later, `npx`) publishes to the network with
+zero setup, MCP or CLI.
+
+Privacy is intact and the hardlines hold: the assessment never touches
+a server (only the network base moved), and data leaves only on an
+explicit, consented identity action — register shows an approval card;
+status/inbox are no-ops without a token; histograms are anonymous. The
+CI guard `test_no_outbound_host_beyond_the_configured_relay` forbade any
+external host; it now allows exactly one sanctioned production relay
+(the same deliberate-exemption pattern as the backend's mailer), with a
+docstring recording why. README quickstart drops the `export
+NMA_NET_BASE` step.
+
+Verified live: with NMA_NET_BASE unset, `nma-net status` reached
+network.nextmillionai.org and read its pool (0). All four gates green
+(668 pytest, ruff, format, mypy); node syntax checks pass.
+
+**APE review:** The one line that matters is the default literal; the
+risk is turning a local-first tool into one that phones home by
+default, so I checked the consent/privacy path end-to-end before
+flipping it — no data leaves without an explicit identity action, and
+the assessment path is untouched. The guard edit is the honest way to
+make this change: it forces the allowed host to be named and reviewed
+rather than silently permitted. Override path preserved for anyone
+running their own relay. Verdict: **APPROVE**.
