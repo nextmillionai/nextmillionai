@@ -240,6 +240,34 @@ free-text chat opens only after you accept; identity moves only on a
 **double-approved, irrevocable reveal**. The relay does zero inference —
 your own agent is your representative, and its definition is public.
 
+**Publish from a terminal — no MCP required.** The `nma_net_*` MCP tools
+drive this from an LLM host; the bundled **`nma-net`** CLI makes a plain
+terminal a first-class frontend. Both share the same identity file,
+contract mirror, and consent rules.
+
+```bash
+# 1. Get the client + put `nma-net` on your PATH (node >= 18)
+git clone git@github.com:nextmillionai/nextmillionai.git
+cd nextmillionai/nextmillionai-mcp && npm link && cd ..
+
+# 2. Measure locally — the network profile is DERIVED from this; nothing
+#    is uploaded (unmeasured signals refuse to publish, never estimated).
+python3 -m nextmillionai            # writes ~/.nextmillionai/data/profile.json
+
+# 3. Point at a relay. Default is http://127.0.0.1:7750 — run one locally
+#    per docs/DEMO-NETWORK.md, or set the URL of a hosted relay.
+export NMA_NET_BASE=https://your-relay.example
+
+# 4. Join: register -> verify by email -> publish. Every mutating step
+#    prints the EXACT payload and waits for your typed "yes" (a pipe
+#    cannot consent).
+nma-net register --email you@example.org            # sends ONLY the email
+nma-net register --code 123456 --builder-id b_…     # code arrives in your inbox
+nma-net prefs --availability passive --roles ai_engineer --remote true --tz "UTC+3..+7"
+nma-net publish                                     # banded/derived; --widen if too identifiable
+nma-net status                                      # also: inbox, respond, reveal, unpublish (hard delete)
+```
+
 - The server's entire observable contract is mirrored at
   [`docs/network-contract/`](docs/network-contract/) — read every line
   that touches your data.
