@@ -264,7 +264,7 @@ nextmillionai/            the Python engine (zero deps)
   network.py              the ONLY outbound module (publish/sync, opt-in)
   static/                 profile.html / report.html + css/js (one JSON in)
   docs/                   SCORING-METHODOLOGY.md, SCHEMA.md (contracts)
-nextmillionai-mcp/        MCP server (Node) — coming soon
+nextmillionai-mcp/        MCP server (Node) — 23 tools, registered via .mcp.json
 docs/                     ADAPTERS, SYNC, TRUST, DESIGN
 tests/                    640+ tests incl. privacy guards + engine invariants
 ```

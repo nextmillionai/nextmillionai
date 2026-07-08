@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "nextmillionai": {
+      "command": "node",
+      "args": ["nextmillionai-mcp/index.js"]
+    }
+  }
+}
