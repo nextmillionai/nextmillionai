@@ -238,3 +238,21 @@ unchanged (grep: no new logging/sending). The tolerant read
 (`typeof m.body === 'string' ? … : m.body?.text`) survives the contract
 being pinned either way. Gates: 655 green; live re-render verified on
 builder and hirer sides. Verdict: **APPROVE**.
+
+### Commit 9 — docs(public-mirror): network entries for the public variant templates
+
+Scope: the public-mirror variant templates lagged the branch —
+`scripts/public/CURRENT.public.md` was missing the index row for
+`docs/network-client-WORKLOG.md` (a mirror-included doc, so
+`test_docs_truth` would fail in a mirror seeded from this branch), and
+`scripts/public/CHANGELOG.public.md` had no entry for the silent-network
+client work. Added the worklog row and an `[Unreleased]` changelog entry
+(the private entry, with the private-backend provenance line adapted to
+the public voice).
+
+**APE review:** Template-only change (`scripts/public/*` never ships in
+the mirror itself; it *becomes* the mirror's CURRENT.md/CHANGELOG.md).
+Content is a copy of already-public-voiced rows/entries; no internal
+paths introduced (guard test asserts the templates reference no
+excluded trees — green). Gates: 654+1skip pytest, ruff, format, mypy
+all green. Verdict: **APPROVE**.
