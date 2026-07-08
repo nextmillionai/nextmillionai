@@ -135,6 +135,21 @@ def test_unmeasured_refuses_never_estimates():
     )
 
 
+def test_unpublish_never_deletes_the_identity_file_for_env_identities():
+    """Demo/seeded identities come in via NMA_NET_BUILDER_ID/NMA_NET_TOKEN;
+    unpublishing one must not destroy the machine's real identity file."""
+    src = DEV_MCP.read_text()
+    assert re.search(r"source: envActive \? 'env' : 'file'", src), (
+        "netCreds must report whether the active identity came from env or file"
+    )
+    block = _tool_block(src, "nma_net_unpublish")
+    assert "source" in block
+    # the rm of the identity file only runs on the file-sourced path
+    assert re.search(r"if \(source === 'file'\)[\s\S]{0,120}rm\(NET_IDENTITY_PATH", block), (
+        "nma_net_unpublish must guard rm(NET_IDENTITY_PATH) behind source === 'file'"
+    )
+
+
 def test_no_outbound_host_beyond_the_configured_relay():
     """The MCP packages talk to the user-configured relay and localhost
     defaults only — no hardcoded external hosts anywhere (the network.py

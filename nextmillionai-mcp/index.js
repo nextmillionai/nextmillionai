@@ -672,13 +672,17 @@ async function saveNetIdentity(identity) {
   await writeFile(NET_IDENTITY_PATH, JSON.stringify(identity, null, 2));
 }
 
-/** Credentials: env (seeded/demo identities) wins over the identity file. */
+/** Credentials: env (seeded/demo identities) wins over the identity file.
+ * `source` records which one is active so destructive tools never touch the
+ * identity file while acting as an env-supplied demo identity. */
 async function netCreds() {
   const id = await loadNetIdentity();
+  const envActive = Boolean(process.env.NMA_NET_BUILDER_ID || process.env.NMA_NET_TOKEN);
   return {
     builderId: process.env.NMA_NET_BUILDER_ID || id.builder_id || null,
     token: process.env.NMA_NET_TOKEN || id.token || null,
     identity: id,
+    source: envActive ? 'env' : 'file',
   };
 }
 
@@ -1068,15 +1072,21 @@ server.tool(
   },
   async ({ confirmed }) => {
     try {
-      const { builderId, token } = await netCreds();
+      const { builderId, token, source } = await netCreds();
       if (!builderId || !token) return errText('No network identity to unpublish.');
       if (!confirmed) {
-        return text(`${NET_APPROVAL_HEADER}\nAction: DELETE /v1/profiles/${builderId} on ${NET_BASE}\nEffect (one transaction, irreversible): profile gone, vault email gone, ALL conversations gone (both sides lose the thread), registration gone, token dead. Re-joining = new pseudonym.${NET_CONFIRM_FOOTER}`);
+        const which = source === 'env'
+          ? `the env-supplied identity ${builderId} (NMA_NET_BUILDER_ID/NMA_NET_TOKEN — the local identity file is NOT touched)`
+          : `this machine's identity ${builderId} (the local identity file is removed too)`;
+        return text(`${NET_APPROVAL_HEADER}\nAction: DELETE /v1/profiles/${builderId} on ${NET_BASE}\nDeletes: ${which}\nEffect (one transaction, irreversible): profile gone, vault email gone, ALL conversations gone (both sides lose the thread), registration gone, token dead. Re-joining = new pseudonym.${NET_CONFIRM_FOOTER}`);
       }
       const { status, json } = await netFetch(`/v1/profiles/${builderId}`, { method: 'DELETE', token });
       if (status !== 204) return errText(netError(status, json));
-      await rm(NET_IDENTITY_PATH, { force: true });
-      return text(`Unpublished — hard delete confirmed by the relay. Nothing about the user exists on the network any more. Local identity file removed.`);
+      if (source === 'file') {
+        await rm(NET_IDENTITY_PATH, { force: true });
+        return text(`Unpublished — hard delete confirmed by the relay. Nothing about the user exists on the network any more. Local identity file removed.`);
+      }
+      return text(`Unpublished — hard delete confirmed by the relay for the env-supplied identity ${builderId}. The local identity file (if any) was left untouched.`);
     } catch (e) { return errText(`net_unpublish failed: ${e.message}`); }
   }
 );

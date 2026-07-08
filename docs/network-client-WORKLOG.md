@@ -273,3 +273,24 @@ with the hardline "unmeasurable → insufficient, never estimated" — this
 was the one place the client could over-claim evidence. No payload or
 consent surface touched. Gates: node 9/9, pytest 663 green, ruff,
 format, mypy clean. Verdict: **APPROVE**.
+
+### Commit 12 — fix(mcp): env-supplied demo identities never touch identity.json
+
+Scope: review finding F2 (staging blocker). `netCreds()` lets
+`NMA_NET_BUILDER_ID`/`NMA_NET_TOKEN` override the identity file for
+seeded/demo identities — but `nma_net_unpublish` then removed
+`~/.nextmillionai/network/identity.json` unconditionally, so
+unpublishing a demo identity destroyed the machine's REAL pseudonym
+(token unrecoverable by design). `netCreds` now reports its source
+(`env` | `file`); unpublish deletes the file only on the file path, and
+the approval card states which identity dies and whether the file is
+touched. Pytest pins the guard at source level; verified behaviorally
+(dry-run with env creds + decoy identity file: card says "NOT touched",
+decoy survives).
+
+**APE review:** Smallest change that closes the destruction path —
+credential precedence is untouched (env still wins for reads/sends), so
+seeded demos keep working; only the destructive tail is source-gated.
+The approval card gained the one line a human needs to catch the
+wrong-identity case. Gates: pytest 664, node 9/9, ruff, format, mypy
+green. Verdict: **APPROVE**.
