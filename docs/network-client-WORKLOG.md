@@ -256,3 +256,20 @@ Content is a copy of already-public-voiced rows/entries; no internal
 paths introduced (guard test asserts the templates reference no
 excluded trees — green). Gates: 654+1skip pytest, ruff, format, mypy
 all green. Verdict: **APPROVE**.
+
+### Commit 11 — fix(net-lib): zero surviving AI lines refuses to publish
+
+Scope: review finding F3 (staging blocker). `bandLocSurvived(0)`
+returned the `'<1k'` band, publishing a measured-looking evidence claim
+when the git-attribution scan had in fact measured nothing. Zero (or
+negative) now maps to null — the existing insufficiency path refuses
+with "AI-LOC-survived unmeasured", same as every other unmeasured
+signal. Node test extended (0 and -1 band to null; a fixture with
+`ai_lines_survived: 0` refuses); the pytest pin now asserts the
+source-level guard.
+
+**APE review:** One-line semantic fix inside the pure library, aligned
+with the hardline "unmeasurable → insufficient, never estimated" — this
+was the one place the client could over-claim evidence. No payload or
+consent surface touched. Gates: node 9/9, pytest 663 green, ruff,
+format, mypy clean. Verdict: **APPROVE**.

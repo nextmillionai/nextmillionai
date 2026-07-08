@@ -68,7 +68,9 @@ export function bandSessionHours(hours) {
 }
 
 export function bandLocSurvived(lines) {
-  if (lines === null || lines === undefined) return null;
+  // 0 means the git-attribution scan measured nothing, not "under 1k lines
+  // survived" — unmeasured is insufficient (refuse), never the lowest band.
+  if (lines === null || lines === undefined || lines <= 0) return null;
   if (lines < 1000) return '<1k';
   if (lines < 10000) return '1k-10k';
   if (lines < 50000) return '10k-50k';

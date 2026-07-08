@@ -129,6 +129,10 @@ def test_unmeasured_refuses_never_estimates():
     assert re.search(r"return \{ doc: null, insufficiencies \}", lib), (
         "buildNetworkProfile must refuse (doc: null) when anything is unmeasured"
     )
+    # 0 surviving AI lines = the scan measured nothing, not the '<1k' band
+    assert re.search(r"lines <= 0\) return null", lib), (
+        "bandLocSurvived must treat 0 as unmeasured (refuse), never band it"
+    )
 
 
 def test_no_outbound_host_beyond_the_configured_relay():

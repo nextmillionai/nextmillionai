@@ -86,6 +86,16 @@ test('unmeasured dimension refuses to publish — never estimates', () => {
   assert.ok(insufficiencies.some((i) => i.includes('context_command')));
 });
 
+test('zero surviving AI lines is unmeasured — refuses, never the <1k band', () => {
+  assert.equal(bandLocSurvived(0), null);
+  assert.equal(bandLocSurvived(-1), null);
+  const p = structuredClone(FIXTURE_PROFILE);
+  p.signals.ai_lines_survived = 0;
+  const { doc, insufficiencies } = buildNetworkProfile(p, FIXTURE_PREFS, B_ID);
+  assert.equal(doc, null);
+  assert.ok(insufficiencies.some((i) => i.includes('AI-LOC-survived unmeasured')));
+});
+
 test('missing prefs refuse to publish (they are choices, not derivations)', () => {
   const { doc, insufficiencies } = buildNetworkProfile(FIXTURE_PROFILE, {}, B_ID);
   assert.equal(doc, null);
