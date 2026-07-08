@@ -294,3 +294,42 @@ seeded demos keep working; only the destructive tail is source-gated.
 The approval card gained the one line a human needs to catch the
 wrong-identity case. Gates: pytest 664, node 9/9, ruff, format, mypy
 green. Verdict: **APPROVE**.
+
+### Commit 13 — feat(cli): `nma-net` — the full builder lifecycle from a terminal, MCP optional
+
+Scope: the MCP server was the only frontend to the network, which made
+an MCP host a de-facto mandate. `nextmillionai-mcp/cli.js` (new, second
+`bin`: `nma-net`) covers the entire builder lifecycle from a cloned
+repo and a plain terminal: register/verify, prefs, publish, status,
+inbox, respond, reveal, block, unpublish. Nothing consent-critical is
+forked: the CLI imports `net-lib.js` verbatim (band mapping that
+refuses unmeasured signals, contract-schema validation, identifiability
+warnings + widen) and shares the MCP's identity file and env-identity
+precedence, including the F2 guard (env identities never touch the
+file). Consent is enforced harder than the MCP can: the exact payload
+prints and a human types the answer at an interactive terminal —
+non-TTY stdin refuses, so a script cannot consent. Unpublish requires
+typing the builder id itself. Package: version 1.1.0, `files` +=
+cli.js, and the license field fixed to Apache-2.0 (was MIT in an
+Apache-2.0 repo — pre-existing nit, resolved before any registry
+publish bakes it in). Tests: 3 new source-level pins (all nine commands
+present + net-lib reuse; every mutating command gates on interactive
+consent; the honesty lines carry over) and cli.js joins the
+no-external-hosts scan. README: "no MCP required" section.
+
+Verified live against a local relay: read-only status → piped-stdin
+register REFUSED (consent hardline) → interactive register + verify →
+prefs → publish from a real engine assessment (approval card with 16
+identifiability warnings on an empty pool; relay 204; pool 0→1) →
+status shows own bands → unpublish by typed builder id (pool 1→0,
+identity file removed).
+
+**APE review:** The consent UX is the product here, and a CLI can
+regress it invisibly — hence the TTY refusal (stronger than the MCP's
+`confirmed:true`, which a misbehaving agent could set) and the pins
+that grep the source the same way the MCP tools are pinned. Duplication
+audit: only thin glue (fetch wrapper, arg parsing, rendering) is
+CLI-local; every judgment call lives in net-lib, used by both
+frontends. Risk noted: the CLI and MCP approval texts can drift apart
+over time — acceptable now, revisit if a third frontend appears. Gates:
+pytest 668 + node suite, ruff, format, mypy green. Verdict: **APPROVE**.

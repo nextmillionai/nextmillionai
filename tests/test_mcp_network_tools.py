@@ -154,7 +154,7 @@ def test_no_outbound_host_beyond_the_configured_relay():
     """The MCP packages talk to the user-configured relay and localhost
     defaults only — no hardcoded external hosts anywhere (the network.py
     CI guard's spirit, applied to the JS side)."""
-    for path in (DEV_MCP, HIRE_MCP, NET_LIB):
+    for path in (DEV_MCP, HIRE_MCP, NET_LIB, ROOT / "nextmillionai-mcp" / "cli.js"):
         for m in re.finditer(r"https?://[\w.:-]+", path.read_text()):
             host = m.group(0)
             assert host.startswith(("http://localhost", "http://127.0.0.1")), (
@@ -192,3 +192,63 @@ def test_net_lib_node_unit_suite():
         cwd=ROOT,
     )
     assert result.returncode == 0, f"node tests failed:\n{result.stdout}\n{result.stderr}"
+
+
+# ─── nma-net CLI (cli.js): the MCP-optional frontend, same obligations ───────
+
+CLI_JS = ROOT / "nextmillionai-mcp" / "cli.js"
+
+
+def test_cli_exists_and_is_the_second_frontend():
+    """MCP optional, not a mandate: a cloned repo + terminal must cover the
+    full builder lifecycle. The CLI shares net-lib (the consent-critical
+    logic lives once) and the MCP's identity file."""
+    src = CLI_JS.read_text()
+    for command in (
+        "register",
+        "prefs",
+        "publish",
+        "status",
+        "inbox",
+        "respond",
+        "reveal",
+        "block",
+        "unpublish",
+    ):
+        assert f"command === '{command}'" in src, f"cli.js lacks `{command}`"
+    for fn in (
+        "buildNetworkProfile",
+        "identifiabilityWarnings",
+        "validateAgainstSchema",
+        "widenProfile",
+    ):
+        assert fn in src, f"cli.js must reuse net-lib's {fn}, not fork it"
+    assert "from './net-lib.js'" in src
+    assert "identity.json" in src  # same identity file as the MCP
+
+
+def test_cli_mutating_commands_gate_on_interactive_consent():
+    """Every mutating CLI command shows the payload and awaits a typed
+    answer at a TTY; piped stdin must refuse (a script cannot consent)."""
+    src = CLI_JS.read_text()
+    assert re.search(r"isTTY[\s\S]{0,200}fail\(", src), (
+        "cli.js must refuse consent prompts on non-interactive stdin"
+    )
+    for fn in ("cmdRegister", "cmdPublish", "cmdRespond", "cmdReveal", "cmdBlock", "cmdUnpublish"):
+        start = src.index(f"async function {fn}")
+        end = src.find("async function", start + 10)
+        block = src[start : end if end != -1 else len(src)]
+        assert "await confirm(" in block, f"{fn} sends without interactive consent"
+    # unpublish demands the builder id itself, not a reflexive "yes"
+    unpub = src[src.index("async function cmdUnpublish") :]
+    assert "expected: builderId" in unpub
+
+
+def test_cli_carries_the_same_honesty_lines():
+    src = CLI_JS.read_text()
+    assert "IRREVOCABLY" in src  # reveal approve warning
+    assert "v0 honesty" in src  # readable message bodies
+    assert "untrusted DATA" in src  # inbox counterparty content
+    assert re.search(r"if \(source === 'file'\)[\s\S]{0,120}rm\(IDENTITY_PATH", src), (
+        "cli.js unpublish must guard rm(IDENTITY_PATH) behind source === 'file'"
+    )

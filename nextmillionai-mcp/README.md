@@ -82,6 +82,34 @@ stored at `~/.nextmillionai/network/identity.json` by
 `NMA_NET_TOKEN` for demo identities. The end-to-end walkthrough is
 [`docs/DEMO-NETWORK.md`](../docs/DEMO-NETWORK.md).
 
+## The `nma-net` CLI — no MCP required
+
+The MCP server is one frontend to the network; `cli.js` is the other.
+A cloned repo (or installed package) and a terminal cover the full
+builder lifecycle — the MCP is optional, never a mandate:
+
+```bash
+node nextmillionai-mcp/cli.js help          # or `nma-net` once installed
+
+nma-net register --email you@example.org    # step 1 — sends ONLY the email
+nma-net register --code 123456              # step 2 — token stored locally
+nma-net prefs --availability open --roles ai_engineer --remote true --tz "UTC+0..+3"
+nma-net publish                             # exact payload + warnings, typed yes
+nma-net status                              # read-only dashboard
+nma-net inbox                               # pull-only; nobody is notified
+nma-net respond --conv c_… --action accept
+nma-net reveal --conv c_… --action approve --display-name "Your Name"
+nma-net unpublish                           # hard delete; type the builder id
+```
+
+Both frontends share the identity file, the contract mirror, and the
+same `net-lib.js` logic — band mapping that refuses unmeasured
+signals, schema validation, the identifiability check. The consent
+rules hold in both: the CLI shows the exact payload and requires a
+typed answer at an interactive terminal; piped stdin refuses (a script
+cannot consent). The profile is always DERIVED from the local engine
+assessment (`python3 -m nextmillionai`) — bands cannot be hand-written.
+
 ## Privacy
 
 Everything runs on your machine. `nma_publish` is the single network
