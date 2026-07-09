@@ -368,3 +368,28 @@ the assessment path is untouched. The guard edit is the honest way to
 make this change: it forces the allowed host to be named and reviewed
 rather than silently permitted. Override path preserved for anyone
 running their own relay. Verdict: **APPROVE**.
+
+### Commit 15 — docs(hire-mcp): hirer onboarding guide
+
+Scope: README-only. The hire-mcp Setup section predated the hosted
+relay: it pointed NMA_NET_BASE at localhost and compressed the entire
+onboarding (register → manual approval → token) into one sentence,
+with no answer to "how do I actually request approval and receive the
+token?". Rewritten as a 6-step onboarding guide: clone (branch-aware)
+→ MCP config without a token (registration is the one tokenless call,
+stated) → register via tool or a plain curl → request approval by
+GitHub issue carrying ONLY the pseudonymous h_… id → token arrives at
+the registered work address → first-session expectations (watermarked
+search, quota, silence-is-normal). Plus a failure table mapping the
+real error surfaces (tokenless guard, 401/403/429, node<18 fetch) and
+a token-hygiene note. Default base is the hosted relay; NMA_NET_BASE
+demoted to the self-host escape hatch.
+
+**APE review:** The approval-request channel (public GitHub issue with
+the pseudonymous id; token delivered by email to the registered
+address) is an operational decision made here — it keeps ids public
+and secrets private, but the PO can swap the channel with a one-line
+edit; flagged in the session summary. Privacy check: the guide tells
+hirers explicitly what is stored and when the domain is disclosed;
+nothing in the flow posts an email or company name publicly. No code
+touched; consent pins unaffected. Verdict: **APPROVE**.
