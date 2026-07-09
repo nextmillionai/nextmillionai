@@ -12,8 +12,8 @@
  * Config (env):
  *   NMA_NET_BASE    relay base URL (default https://network.nextmillionai.org;
  *                   override for a local/self-hosted relay)
- *   NMA_HIRE_TOKEN  hirer bearer token, issued by the operator after
- *                   manual approval of your work-email registration
+ *   NMA_HIRE_TOKEN  hirer bearer token — emailed to your work address
+ *                   when you register (nma_hire_register)
  *
  *   {
  *     "mcpServers": {
@@ -39,7 +39,7 @@ const errText = (t) => ({ content: [{ type: 'text', text: t }], isError: true })
 async function netFetch(path, { method = 'GET', body = undefined, auth = true } = {}) {
   const headers = {};
   if (auth) {
-    if (!TOKEN) throw new Error('NMA_HIRE_TOKEN is not set. Hirer tokens are issued by the operator after manual approval (nma_hire_register starts that).');
+    if (!TOKEN) throw new Error('NMA_HIRE_TOKEN is not set. Registering (nma_hire_register) emails the token to your work address — put it in NMA_HIRE_TOKEN and restart.');
     headers.Authorization = `Bearer ${TOKEN}`;
   }
   if (body !== undefined) headers['Content-Type'] = 'application/json';
@@ -150,7 +150,7 @@ const server = new McpServer({ name: 'nextmillionai-hire', version: '0.1.0' });
 
 server.tool(
   'nma_hire_register',
-  `Register a hirer account on the silent network. Sends your work email + company domain (free-mail domains are rejected — the network verifies you hire for a real company). Registration starts 'pending': a human operator manually approves it and issues the bearer token you put in NMA_HIRE_TOKEN. Mutating: display the exact payload and get the user's explicit yes before calling with confirmed=true.`,
+  `Register a hirer account on the silent network. Sends your work email + company domain (free-mail domains are rejected and the email must match the domain — the network verifies you hire for a real company). Onboarding is automatic: your bearer token is emailed to that work address, never returned here; put it in NMA_HIRE_TOKEN. Mutating: display the exact payload and get the user's explicit yes before calling with confirmed=true.`,
   {
     email: z.string().describe('Work email (must match the company domain).'),
     company_domain: z.string().describe('Company domain, e.g. acme.dev. Revealed to builders only at reveal fulfillment — pre-reveal they see size + sector only.'),
@@ -159,11 +159,11 @@ server.tool(
   async ({ email, company_domain, confirmed }) => {
     try {
       if (!confirmed) {
-        return text(`${APPROVAL_HEADER}\nAction: POST /v1/hirers on ${NET_BASE}\nPayload: ${JSON.stringify({ email, company_domain })}\n\nAfter approval by the network operator you receive a bearer token for NMA_HIRE_TOKEN. Builders never see this email or domain until a double-approved reveal.${CONFIRM_FOOTER}`);
+        return text(`${APPROVAL_HEADER}\nAction: POST /v1/hirers on ${NET_BASE}\nPayload: ${JSON.stringify({ email, company_domain })}\n\nOn success your bearer token for NMA_HIRE_TOKEN is emailed to this address (it is never returned in the API response). Builders never see this email or domain until a double-approved reveal.${CONFIRM_FOOTER}`);
       }
       const { status, json } = await netFetch('/v1/hirers', { method: 'POST', body: { email, company_domain }, auth: false });
       if (status !== 201) return errText(netError(status, json));
-      return text(`Registered: ${JSON.stringify(json)}\nStatus is 'pending' — the operator approves manually and issues your token. Put it in NMA_HIRE_TOKEN and restart the MCP server.`);
+      return text(`Registered: ${JSON.stringify(json)}\nCheck the work email you registered — the onboarding message carries your token. Put it in NMA_HIRE_TOKEN and restart the MCP server.`);
     } catch (e) { return errText(`hire_register failed: ${e.message}`); }
   }
 );

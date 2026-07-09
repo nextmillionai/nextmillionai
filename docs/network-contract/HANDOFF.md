@@ -44,9 +44,14 @@ identities.
   verification code is printed to the *server console* in demo mode —
   the dev-side flow should tell the user to look there (it stands in
   for a verification email).
-- Hirer token: printed by the operator CLI
-  (`python -m server approve-hirer <hirer_id>`) after manual approval.
-  The hirer MCP is configured with this token.
+- Hirer token: emailed automatically to the registered work address by
+  `POST /v1/hirers` (auto-onboard; printed to the *server console* in
+  demo mode, like the builder code). The email's domain must equal
+  `company_domain` and free-mail domains are rejected, so delivery IS
+  the verification. The operator CLI
+  (`python -m server approve-hirer <hirer_id>`) remains the manual
+  valve for re-issuing/rotating a token. The hirer MCP is configured
+  with this token.
 - 401 = bad/missing token (or hirer not yet approved). 403 = wrong
   party (e.g. token doesn't own the profile). 404 = not found OR not
   your conversation (deliberately indistinguishable). 409 = illegal
@@ -62,7 +67,7 @@ identities.
 | PUT /v1/profiles/{id} | builder | body = full `network_profile.v1` doc; 204 |
 | DELETE /v1/profiles/{id} | builder | HARD delete; token dies with it; 204 |
 | GET /v1/pool/histograms | public | for the pre-publish identifiability check |
-| POST /v1/hirers | public | `{email, company_domain}`; free-mail rejected (403) |
+| POST /v1/hirers | public | `{email, company_domain}`; free-mail/domain-mismatch rejected (403); 201 → `{hirer_id, status: "approved"}`, token emailed (demo: server console) |
 | GET /v1/search | hirer | query params below; max 10 cards/page |
 | POST /v1/interests | hirer | `{builder_id, role_card}`; 201 → `{conv, state}` |
 | GET /v1/mailbox | both | full conversations: state, role_card, messages, events |

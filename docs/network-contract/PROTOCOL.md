@@ -10,8 +10,11 @@ that is a bug in the server, not in the document.
 
 - **Builder** — a developer who published a `network_profile.v1`
   (see `network_profile.v1.json`). Pseudonymous: `b_…` id.
-- **Hirer** — a hiring manager, registered with a work email and
-  manually approved. Pseudonymous to builders pre-reveal: `h_…` id.
+- **Hirer** — a hiring manager, registered with a work email on their
+  company domain (free-mail rejected) and auto-onboarded: the API
+  token is delivered only to that inbox, so holding it proves control
+  of a company-domain address. Pseudonymous to builders pre-reveal:
+  `h_…` id.
 - **Relay** — the hosted server. A typed-message store-and-forward,
   structured search index, and reveal escrow. It performs **zero LLM
   inference** and never generates, rewrites, ranks, or interprets

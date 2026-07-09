@@ -149,8 +149,9 @@ paths:
               schema: {}
   /v1/hirers:
     post:
-      summary: Register a hirer (work email + company domain; free-mail domains rejected). Status starts
-        'pending'; token issued by the operator on manual approval.
+      summary: Register a hirer (work email + company domain; free-mail and email/domain mismatch rejected).
+        Auto-onboards on success — the API token is emailed to the work address (server console in demo
+        mode) and never returned in the response; 201 → {hirer_id, status 'approved'}.
       operationId: register_hirer_v1_hirers_post
       requestBody:
         content:

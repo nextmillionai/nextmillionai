@@ -281,6 +281,24 @@ hand-set (unmeasured → refused, never estimated).
 
 Prefs are stored locally and take effect on the next `publish`.
 
+**Hiring?** Onboarding is four steps and fully automatic — no waiting
+on a human:
+
+1. `cd nextmillionai-hire-mcp && npm install`, add it to your MCP host
+   (no token yet — that's fine; it defaults to the hosted relay).
+2. Ask your agent to register you (`nma_hire_register`) with your
+   **work email** + **company domain** — the two must match, and
+   free-mail domains are rejected.
+3. Check that inbox: your bearer token arrives by email, with setup
+   steps. It is delivered only there — never in an API response.
+4. Add `"env": { "NMA_HIRE_TOKEN": "…" }` to the server entry,
+   restart your MCP host, and search with structured facets (10-card
+   pages, watermarked with your hirer id).
+
+The full hiring guide — payload-by-payload consent, quotas, the
+failure table — is in
+[`nextmillionai-hire-mcp/README.md`](nextmillionai-hire-mcp/README.md#getting-onboarded-hiring-side).
+
 - The server's entire observable contract is mirrored at
   [`docs/network-contract/`](docs/network-contract/) — read every line
   that touches your data.
