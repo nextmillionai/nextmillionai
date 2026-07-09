@@ -20,6 +20,8 @@ def _read(p):
 
 def test_cli_flags_and_tokens_exist():
     cli_src = _read("nextmillionai/build_profile.py")
+    # The README also documents the node `nma-net` CLI's flags.
+    nma_net_src = _read("nextmillionai-mcp/cli.js")
     css = (
         _read("nextmillionai/static/css/profile.css")
         + _read("nextmillionai/static/css/report.css")
@@ -32,8 +34,8 @@ def test_cli_flags_and_tokens_exist():
             + re.findall(r"nextmillionai [a-z]+ (--[a-z-]+)", text)
         )
         for m in mentions:
-            assert f'"{m}"' in cli_src or m in css, (
-                f"{doc} mentions {m} — not an argparse flag and not a CSS token"
+            assert f'"{m}"' in cli_src or m in nma_net_src or m in css, (
+                f"{doc} mentions {m} — not a CLI flag (python or nma-net) and not a CSS token"
             )
 
 

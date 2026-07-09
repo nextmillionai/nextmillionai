@@ -393,3 +393,46 @@ edit; flagged in the session summary. Privacy check: the guide tells
 hirers explicitly what is stored and when the domain is disclosed;
 nothing in the flow posts an email or company name publicly. No code
 touched; consent pins unaffected. Verdict: **APPROVE**.
+
+### Commit 16 — fix(tests): docs-truth gate learns the nma-net CLI's flags
+
+Scope: one test. `test_cli_flags_and_tokens_exist` validated README
+flag mentions against the python CLI's argparse and the CSS tokens
+only — the `nma-net` prefs table added in commit 14 made it red
+(`--roles` is a node CLI flag). The gate now also accepts flags found
+in `nextmillionai-mcp/cli.js`, keeping its purpose (docs must not
+mention flags that don't exist in shipped code) while covering both
+CLIs.
+
+**APE review:** Considered rewording the README instead — rejected:
+the flags are real and documenting them is the point; the gate, not
+the doc, had the blind spot. The check stays truthful (a fabricated
+flag still fails: it appears in neither source). Verdict: **APPROVE**.
+
+### Commit 17 — docs+mcp: hirer onboarding is automatic — token arrives by email
+
+Scope: contract mirror + hire-mcp copy + READMEs; no logic changes.
+The relay now auto-onboards hirers: `POST /v1/hirers` emails the
+bearer token (with setup steps) to the registered work address —
+free-mail rejection and the email==company_domain check make inbox
+delivery the verification; the response never carries the token.
+Re-mirrored `docs/network-contract/` from the server contract
+(HANDOFF, PROTOCOL, openapi — diff-verified byte-identical). Rewrote
+the hire-mcp guide's Step 4 (GitHub-issue approval → check your work
+email), updated the intro (the gate is the work-email domain, not a
+human queue), failure table (+502/503 registration rows), tools table,
+and the register tool's own text (tool description, approval card,
+success message, tokenless-guard error) so the MCP never promises the
+old manual flow. Main README gains a four-step "Hiring?" onboarding
+block pointing at the full guide.
+
+**APE review:** Copy-only on the js side — payload shapes, consent
+gates (`confirmed: true`, approval cards), and pins untouched (node
+9/9, pytest 667 green, consent-contract tests pass unchanged). The
+irreversible-reveal and v0-honesty language is not weakened. Privacy
+check: the new copy tells hirers the token travels only by email and
+never in responses — matches the server contract just mirrored; no
+email/company examples added. Contract mirror is byte-identical by
+`diff -rq`. Commit 15's approval-channel decision is superseded by
+the PO's auto-onboarding decision (2026-07-09), recorded here.
+Verdict: **APPROVE**.
