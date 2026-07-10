@@ -5,8 +5,8 @@ The relay does zero inference — it cannot rank, summarize, or match.
 Your agent translates a role description into structured facets, reads
 banded pseudonymous cards, and drives a double-opt-in conversation. The
 whole server contract is public and mirrored at
-[`docs/network-contract/`](../docs/network-contract/): read every line
-the network can see.
+[`docs/network-contract/`](https://github.com/nextmillionai/nextmillionai/tree/feat/silent-network-client/docs/network-contract):
+read every line the network can see.
 
 ## How hiring works here
 
@@ -47,29 +47,40 @@ Onboarding is fully automatic: no human approval step, no waiting.
 Desktop, Cursor, …) · a work email on your company's domain
 (free-mail addresses like gmail are rejected for hirers).
 
-### Step 1 — Get the client
+### Steps 1+2 — Add the MCP server (no clone, no token yet — that's fine)
 
-```bash
-git clone -b feat/silent-network-client https://github.com/nextmillionai/nextmillionai.git
-cd nextmillionai/nextmillionai-hire-mcp && npm install
-```
-
-### Step 2 — Add the MCP server (no token yet — that's fine)
-
-Registration works without a token; everything else refuses until you
-have one. The client talks to the hosted relay
+The package is on npm, so `npx` fetches and runs it — nothing to clone
+or install. Registration works without a token; everything else
+refuses until you have one. The client talks to the hosted relay
 (`network.nextmillionai.org`) by default — no relay setup, no
 `NMA_NET_BASE` needed.
+
+Claude Code, one line:
+
+```bash
+claude mcp add nextmillionai-hire -- npx -y nextmillionai-hire-mcp
+```
+
+Any other MCP host (Claude Desktop, Cursor, …):
 
 ```json
 {
   "mcpServers": {
     "nextmillionai-hire": {
-      "command": "node",
-      "args": ["/absolute/path/to/nextmillionai/nextmillionai-hire-mcp/index.js"]
+      "command": "npx",
+      "args": ["-y", "nextmillionai-hire-mcp"]
     }
   }
 }
+```
+
+Prefer running from source? Clone and point your host at the file
+instead:
+
+```bash
+git clone -b feat/silent-network-client https://github.com/nextmillionai/nextmillionai.git
+cd nextmillionai/nextmillionai-hire-mcp && npm install
+# "command": "node", "args": ["/absolute/path/to/nextmillionai-hire-mcp/index.js"]
 ```
 
 ### Step 3 — Register
@@ -104,11 +115,18 @@ fresh id).
 
 ### Step 5 — Add the token and restart your MCP host
 
+Claude Code:
+
+```bash
+claude mcp remove nextmillionai-hire
+claude mcp add nextmillionai-hire --env NMA_HIRE_TOKEN=<token from the onboarding email> -- npx -y nextmillionai-hire-mcp
+```
+
+Other hosts — add the `env` block to the server entry from steps 1+2:
+
 ```json
       "env": { "NMA_HIRE_TOKEN": "<token from the onboarding email>" }
 ```
-
-(add the `env` block to the server entry from step 2)
 
 ### Step 6 — First session
 
@@ -120,8 +138,10 @@ fresh id).
   means "not now".
 
 Treat the token like a password: env only, never commit it. If it
-leaks, tell the operator — the token can be rotated (the old one
-dies).
+leaks, open a GitHub issue on this repo titled
+`token rotation: h_<your-id>` (the id is pseudonymous — never post the
+token or your email). The operator rotates it and the new token
+arrives at your registered work address; the old one dies.
 
 ### If something fails
 
@@ -152,5 +172,6 @@ Self-hosting a relay (or testing locally)? Point the client at it with
 | `nma_hire_reveal` | Double-opt-in reveal: request / approve, irreversibility stated in plain words. |
 
 A ready-made hirer rep agent that drives these tools honestly lives at
-[`agents/hirer-rep/`](../agents/hirer-rep/) — the end-to-end demo is
-[`docs/DEMO-NETWORK.md`](../docs/DEMO-NETWORK.md).
+[`agents/hirer-rep/`](https://github.com/nextmillionai/nextmillionai/tree/feat/silent-network-client/agents/hirer-rep)
+— the end-to-end demo is
+[`docs/DEMO-NETWORK.md`](https://github.com/nextmillionai/nextmillionai/blob/feat/silent-network-client/docs/DEMO-NETWORK.md).

@@ -282,10 +282,11 @@ hand-set (unmeasured → refused, never estimated).
 Prefs are stored locally and take effect on the next `publish`.
 
 **Hiring?** Onboarding is four steps and fully automatic — no waiting
-on a human:
+on a human, nothing to clone:
 
-1. `cd nextmillionai-hire-mcp && npm install`, add it to your MCP host
-   (no token yet — that's fine; it defaults to the hosted relay).
+1. `claude mcp add nextmillionai-hire -- npx -y nextmillionai-hire-mcp`
+   (or the same `npx -y nextmillionai-hire-mcp` entry in any MCP host —
+   no token yet is fine; it defaults to the hosted relay).
 2. Ask your agent to register you (`nma_hire_register`) with your
    **work email** + **company domain** — the two must match, and
    free-mail domains are rejected.

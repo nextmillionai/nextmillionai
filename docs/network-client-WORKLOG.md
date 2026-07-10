@@ -436,3 +436,29 @@ email/company examples added. Contract mirror is byte-identical by
 `diff -rq`. Commit 15's approval-channel decision is superseded by
 the PO's auto-onboarding decision (2026-07-09), recorded here.
 Verdict: **APPROVE**.
+
+### Commit 18 — feat(hire-mcp): npm-publishable package — npx install, no clone
+
+Scope: package metadata + install docs; no tool logic. package.json
+gains repository (with directory), homepage, bugs, keywords; LICENSE +
+NOTICE copied into the package and added to the files allowlist so the
+tarball is self-contained (5 files, ~14.5 kB, verified by
+`npm pack --dry-run` — no lockfile, no node_modules, no secrets).
+README reworked for its second life as the npm page: absolute GitHub
+URLs replace relative repo links (which 404 on npmjs.com), Steps 1+2
+collapse to `npx -y nextmillionai-hire-mcp` (Claude Code one-liner +
+generic MCP-host JSON), clone demoted to the from-source alternative,
+Step 5 gains the Claude Code token re-add command, and the
+token-rotation channel is restored as a GitHub issue carrying only the
+pseudonymous id. Main README's "Hiring?" block and the index.js header
+example follow.
+
+**APE review:** Verified beyond lint: the packed tarball was installed
+into an isolated directory and driven over stdio through its bin entry
+— initialize + tools/list returns all 7 tools, and an unconfirmed
+register call returns the approval card with the new auto-onboard copy
+against the hosted-relay default (nothing sent). Name availability
+confirmed (404 on the registry). Risk noted: the README says "the
+package is on npm" before it is — mitigated by holding the push until
+`npm publish` succeeds (same session). Publish itself is a PO action;
+credentials never enter the repo or logs. Verdict: **APPROVE**.

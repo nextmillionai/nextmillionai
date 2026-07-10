@@ -18,12 +18,14 @@
  *   {
  *     "mcpServers": {
  *       "nextmillionai-hire": {
- *         "command": "node",
- *         "args": ["/path/to/nextmillionai-hire-mcp/index.js"],
+ *         "command": "npx",
+ *         "args": ["-y", "nextmillionai-hire-mcp"],
  *         "env": { "NMA_HIRE_TOKEN": "…" }
  *       }
  *     }
  *   }
+ *
+ *   (from a clone: "command": "node", "args": [".../index.js"])
  */
 
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';

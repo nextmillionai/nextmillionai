@@ -8,6 +8,23 @@
   "engines": {
     "node": ">=18"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nextmillionai/nextmillionai.git",
+    "directory": "nextmillionai-hire-mcp"
+  },
+  "homepage": "https://github.com/nextmillionai/nextmillionai/blob/feat/silent-network-client/nextmillionai-hire-mcp/README.md",
+  "bugs": {
+    "url": "https://github.com/nextmillionai/nextmillionai/issues"
+  },
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "hiring",
+    "nextmillionai",
+    "silent-network",
+    "agent"
+  ],
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.12.0",
     "zod": "^4.4.3"
@@ -17,6 +34,8 @@
   },
   "files": [
     "index.js",
-    "README.md"
+    "README.md",
+    "LICENSE",
+    "NOTICE"
   ]
 }
