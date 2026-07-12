@@ -1,5 +1,7 @@
 # nextmillionai-hire-mcp
 
+[![npm](https://img.shields.io/npm/v/nextmillionai-hire-mcp)](https://www.npmjs.com/package/nextmillionai-hire-mcp)
+
 The hiring side of the silent network, as MCP tools for your own LLM.
 The relay does zero inference — it cannot rank, summarize, or match.
 Your agent translates a role description into structured facets, reads

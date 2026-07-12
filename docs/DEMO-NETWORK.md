@@ -42,7 +42,10 @@ export NMA_NET_TOKEN=…
 [`../nextmillionai-mcp/README.md`](../nextmillionai-mcp/README.md).)
 
 **Hirer side** — any MCP client; with Claude Desktop or a second
-Claude Code session:
+Claude Code session (the package is
+[on npm](https://www.npmjs.com/package/nextmillionai-hire-mcp), so
+`"command": "npx", "args": ["-y", "nextmillionai-hire-mcp"]` works too
+— this demo uses the checkout you already have):
 
 ```json
 {

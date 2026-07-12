@@ -462,3 +462,18 @@ confirmed (404 on the registry). Risk noted: the README says "the
 package is on npm" before it is — mitigated by holding the push until
 `npm publish` succeeds (same session). Publish itself is a PO action;
 credentials never enter the repo or logs. Verdict: **APPROVE**.
+
+### Commit 19 — docs: npm publish recorded — badge, changelog, demo note
+
+Scope: docs only, post-publish truth pass. `nextmillionai-hire-mcp@0.1.0`
+is live on the registry (published by the PO, passkey 2FA), so: npm
+version badge on the package README, a CHANGELOG entry pairing the two
+user-visible changes (automatic onboarding; one-line npx install), and
+DEMO-NETWORK's hirer-side config notes the npx alternative while
+keeping the from-checkout path the demo actually uses.
+
+**APE review:** Everything stated is verified: registry entry checked
+(`npm view` — 0.1.0, integrity hash), cold-cache `npx` stdio smoke
+test passed before these claims were written. Badge is the single
+standard shields.io image — no emoji, consistent with web-surface
+rules. No code touched; gates green. Verdict: **APPROVE**.

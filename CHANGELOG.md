@@ -7,6 +7,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed — hirer onboarding: automatic, and one-line install
+
+- **`nextmillionai-hire-mcp@0.1.0` published to npm** — install is now
+  `npx -y nextmillionai-hire-mcp` in any MCP host (Claude Code:
+  `claude mcp add nextmillionai-hire -- npx -y nextmillionai-hire-mcp`);
+  cloning the repo is only needed to run from source. The package
+  ships index.js + README + LICENSE/NOTICE only.
+- **Hirer onboarding is automatic**: the relay emails the bearer token
+  (with setup steps) to the registered work address at registration —
+  free-mail is rejected and the email must match the company domain,
+  so inbox delivery is the verification. The GitHub-issue approval
+  step is gone; token rotation still goes through a GitHub issue
+  carrying only the pseudonymous id. Docs and the register tool's
+  copy updated to match; contract mirror re-synced.
+
 ### Added — the silent network, client side (demo)
 
 - **Contract mirror** at `docs/network-contract/`: the relay's entire
