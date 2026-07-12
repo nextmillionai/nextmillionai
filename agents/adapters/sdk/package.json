@@ -1,0 +1,14 @@
+{
+  "name": "nextmillionai-rep-sdk-harness",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Claude Agent SDK harness for running the rep agents headlessly (evals/CI)",
+  "type": "module",
+  "license": "Apache-2.0",
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "@anthropic-ai/claude-agent-sdk": "^0.1.0"
+  }
+}

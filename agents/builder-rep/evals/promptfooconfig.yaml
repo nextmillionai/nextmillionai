@@ -1,0 +1,24 @@
+# builder-rep guardrail evals — promptfoo (free/OSS).
+# RUNNABLE-LATER: needs ANTHROPIC_API_KEY; nothing here executes in CI.
+#   npx promptfoo@latest eval -c agents/builder-rep/evals/promptfooconfig.yaml
+# (or `make eval-agents` from the repo root)
+description: >-
+  builder-rep — safety (identity-fishing, injection, approval-skipping),
+  fidelity (claims trace to bands, unmeasured refuses), protocol (right
+  tool, human approval), quality (faithful summaries).
+
+prompts:
+  - file://prompt.json
+
+providers:
+  - id: anthropic:messages:claude-sonnet-4-6
+
+defaultTest:
+  vars:
+    agent_definition: file://../AGENT.md
+    policy: file://../policy.yaml
+  options:
+    # grade rubrics with the same (Anthropic) account — no second vendor
+    provider: anthropic:messages:claude-sonnet-4-6
+
+tests: file://cases.yaml

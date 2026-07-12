@@ -29,6 +29,13 @@ registry. Mission: reverse hiring on proof-based work.
 | Map | `docs/REPO-FLOW.md` | repo chart & flow (mermaid): scan → score → serve → share |
 | Map | `docs/agents/PROFILE.md`, `docs/agents/REPORT.md` | agent-readable specs for each surface |
 | Contract | `docs/REFERENCES.md` | formal bibliography behind the scoring (with THESIS) |
+| Contract | `docs/network-contract/PROTOCOL.md` | silent-network public contract: actors, state machine, enforced rules (mirrored verbatim from the backend) |
+| Contract | `docs/network-contract/NETWORK-PROMISES.md` | network promises 3–5: what the server stores/sees, what reveal means, honest v0 gaps |
+| Contract | `docs/network-contract/HANDOFF.md` | network client-integration brief: endpoints, auth, what the client must enforce |
+| Network | `docs/DEMO-NETWORK.md` | end-to-end silent-network demo: both MCP servers + rep agents against a locally-running relay, incl. a double-approved reveal |
+| Network | `agents/AGENTS.md` | rep agents: the embedding contract, layered guardrails, porting note (LangGraph / OpenAI Agents SDK) |
+| Network | rep bundles — `AGENT.md`, `context.md` (+ `policy.yaml`) under `agents/builder-rep|hirer-rep/`; Claude adapters `builder-rep.md`, `hirer-rep.md`, `SKILL.md` | the rep-agent definitions (versioned product surface) + harness shims |
+| Network | `docs/network-client-WORKLOG.md` | silent-network client branch worklog: decisions, APE reviews, contract-change list |
 | **Always** | `docs/HARDLINES.md` | confirm-first registry: generated artifacts, versioned contracts, privacy boundary |
 | Process | `docs/proposals/` | methodology change proposals (draft→review→accept); `scripts/proposals.py` to create/compare/render. The reviewable path for any hardline-contract change |
 | Contract | `docs/ADAPTERS.md` | tool coverage: every tool, versions/generations, exact reads, fidelity |
@@ -96,7 +103,7 @@ piece exists and extend it; reach for the contract doc for detail.
   builder card, 2D positioning map, donuts, heatmap, right-click explain,
   view-as-public, Full/Snapshot PDF. Zero emoji (icons.js glyphs only).
 - **Surfaces**: CLI (`start` / `calibrate` / `assess` / `report` /
-  `enrich` / `export` / `sync` / `publish` / …), MCP server (14 tools),
+  `enrich` / `export` / `sync` / `publish` / …), MCP server (23 tools incl. the silent-network nma_net_* group),
   Claude Code plugin, local hub (`/methodology`, `/how-it-works`, APIs),
   static export, reference network registry. Live mode (post-launch,
   `report --live`, SSE). Multi-device sync via the user's own private git repo
@@ -131,7 +138,7 @@ profile.json (THE assessment JSON, ~/.nextmillionai/data/)
    │   + visibility.py per-section consent)
    └→ network.py publish (ONLY outbound module) → network_server.py registry
 static/js: icons.js (glyphs + right-click explain) · profile.js · report.js · tabs-shared.js
-nextmillionai-mcp/index.js: 14 tools, self-locating engine (coming soon)
+nextmillionai-mcp/index.js: 23 tools (14 engine + 9 nma_net_*), self-locating engine
 ```
 
 ## Environment notes

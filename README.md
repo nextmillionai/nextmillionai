@@ -217,16 +217,110 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for the flow.
 
 ## From inside your agent (MCP / plugin)
 
-*Coming soon.* An MCP server with **15 tools** lets any MCP-compatible agent (Claude
-Code, Cursor, Cline) build and query your profile directly. The code is in the repo
-(`nextmillionai-mcp/`); setup instructions will land here when it's ready.
+An MCP server with **23 tools** lets any MCP-compatible agent (Claude Code, Cursor,
+Cline) build and query your profile directly. Inside this repo, Claude Code picks it
+up automatically via the checked-in `.mcp.json`; for other clients see
+[`nextmillionai-mcp/README.md`](nextmillionai-mcp/README.md).
 
 | Group | Tools |
 |---|---|
-| Assess & view | `nma_calibrate`, `nma_assess`, `nma_get_profile`, `nma_get_report`, `nma_serve` |
+| Assess & view | `nma_calibrate`, `nma_assess`, `nma_get_profile`, `nma_get_report`, `nma_profile_url` |
 | Narrative | `nma_enrichment_request`, `nma_enrichment_submit` |
-| Share | `nma_export`, `nma_publish`, `nma_unpublish`, `nma_profile_url` |
+| Share | `nma_export`, `nma_publish`, `nma_unpublish` |
 | Discover & coach | `nma_discover_builders`, `nma_compare_to_role`, `nma_growth_edge`, `nma_doctor` |
+| Silent network | `nma_net_register`, `nma_net_prefs`, `nma_net_publish`, `nma_net_status`, `nma_net_inbox`, `nma_net_respond`, `nma_net_reveal`, `nma_net_block`, `nma_net_unpublish` |
+
+## The silent network (demo)
+
+Agent-to-agent hiring with nothing to dox you: you publish a **banded,
+derived, pseudonymous** document (no free text, week-precision dates) —
+hirers search it from their own LLM with structured facets. Interest
+sits in a mailbox until you ask your agent (nobody is notified, ever);
+free-text chat opens only after you accept; identity moves only on a
+**double-approved, irrevocable reveal**. The relay does zero inference —
+your own agent is your representative, and its definition is public.
+
+**Two personas, one npm install each** (node ≥ 18; both default to the
+hosted relay — zero setup):
+
+| You are | Install | You can |
+|---|---|---|
+| **Developer** (builder) | `npm install -g nextmillionai-mcp` → the `nma-net` CLI **and** the MCP server. MCP in chat: `claude mcp add nextmillionai -- npx -y nextmillionai-mcp` | measure locally → publish a banded profile → read interest → accept / decline → chat → double-opt-in reveal → hard-delete out |
+| **Hiring person** | `claude mcp add nextmillionai-hire -- npx -y nextmillionai-hire-mcp` (any MCP host works — see below) | register with a work email (token arrives by email, no waiting) → structured search → send role-card interest → chat → reveal |
+
+**Publish from a terminal — no MCP required.** The `nma_net_*` MCP tools
+drive this from an LLM host; the bundled **`nma-net`** CLI makes a plain
+terminal a first-class frontend. Both share the same identity file,
+contract mirror, and consent rules.
+
+```bash
+# 1. Get the client + put `nma-net` on your PATH (node >= 18)
+npm install -g nextmillionai-mcp
+#   (from source instead: git clone https://github.com/nextmillionai/nextmillionai.git
+#    then `npm link` inside nextmillionai-mcp/)
+
+# 2. Measure locally — the network profile is DERIVED from this; nothing
+#    is uploaded (unmeasured signals refuse to publish, never estimated).
+python3 -m nextmillionai            # writes ~/.nextmillionai/data/profile.json
+
+# 3. Join: register -> verify by email -> publish. No relay setup — the
+#    client defaults to the hosted relay (network.nextmillionai.org); set
+#    NMA_NET_BASE only to point at a local/self-hosted one. Messages you
+#    type send directly (authored = approved); every OTHER mutating step
+#    prints the EXACT payload and waits for your typed "yes" (a pipe can
+#    neither consent nor speak for you).
+nma-net register --email you@example.org            # sends ONLY the email; code arrives in your inbox
+nma-net register --code 123456                      # builder id is remembered from step 1
+nma-net prefs --availability passive --roles ai_engineer --remote true --tz "UTC+3..+7"
+nma-net publish                                     # banded/derived; --widen if too identifiable
+nma-net status                                      # also: inbox, respond, reveal, unpublish (hard delete)
+```
+
+**Preferences** are the *only* user-set fields (via `nma-net prefs`, or
+the same flags on `nma-net publish`). Everything else in the published
+profile — the six dimension bands, archetype, crafts, stack tags,
+evidence bands — is DERIVED from your local assessment and cannot be
+hand-set (unmeasured → refused, never estimated).
+
+| Flag | Values | Meaning |
+|---|---|---|
+| `--availability` | `open` · `passive` · `paused` | how discoverable you are |
+| `--roles` | 1–3 (comma-sep) of `ai_engineer`, `software_engineer`, `platform_engineer`, `founding_engineer`, `staff_engineer`, `engineering_manager`, `consultant_fractional` | roles you're open to |
+| `--remote` | `true` · `false` | remote-friendly |
+| `--tz` | `UTC-12..-8` · `UTC-8..-4` · `UTC-4..0` · `UTC+0..+3` · `UTC+3..+7` · `UTC+7..+12` | timezone band |
+
+Prefs are stored locally and take effect on the next `publish`.
+
+**Hiring?** Onboarding is four steps and fully automatic — no waiting
+on a human, nothing to clone:
+
+1. `claude mcp add nextmillionai-hire -- npx -y nextmillionai-hire-mcp`
+   (or the same `npx -y nextmillionai-hire-mcp` entry in any MCP host —
+   no token yet is fine; it defaults to the hosted relay).
+2. Ask your agent to register you (`nma_hire_register`) with your
+   **work email** + **company domain** — the two must match, and
+   free-mail domains are rejected.
+3. Check that inbox: your bearer token arrives by email, with setup
+   steps. It is delivered only there — never in an API response.
+4. Add `"env": { "NMA_HIRE_TOKEN": "…" }` to the server entry,
+   restart your MCP host, and search with structured facets (10-card
+   pages, watermarked with your hirer id).
+
+The full hiring guide — payload-by-payload consent, quotas, the
+failure table — is in
+[`nextmillionai-hire-mcp/README.md`](nextmillionai-hire-mcp/README.md#getting-onboarded-hiring-side).
+
+- The server's entire observable contract is mirrored at
+  [`docs/network-contract/`](docs/network-contract/) — read every line
+  that touches your data.
+- The rep agents (`@builder-rep`, `@hirer-rep`) live in
+  [`agents/`](agents/) as open, versioned definitions.
+- The hirer side is [`nextmillionai-hire-mcp/`](nextmillionai-hire-mcp/).
+- Run the whole loop locally, zero paid accounts:
+  [`docs/DEMO-NETWORK.md`](docs/DEMO-NETWORK.md).
+
+Every mutating step shows you the exact payload and waits for your
+explicit yes — humans approve every outbound message.
 
 ## Repo design (60 seconds)
 
@@ -240,7 +334,7 @@ nextmillionai/            the Python engine (zero deps)
   network.py              the ONLY outbound module (publish/sync, opt-in)
   static/                 profile.html / report.html + css/js (one JSON in)
   docs/                   SCORING-METHODOLOGY.md, SCHEMA.md (contracts)
-nextmillionai-mcp/        MCP server (Node) — coming soon
+nextmillionai-mcp/        MCP server (Node) — 23 tools, registered via .mcp.json
 docs/                     ADAPTERS, SYNC, TRUST, DESIGN
 tests/                    640+ tests incl. privacy guards + engine invariants
 ```

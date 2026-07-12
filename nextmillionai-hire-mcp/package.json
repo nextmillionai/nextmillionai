@@ -1,0 +1,41 @@
+{
+  "name": "nextmillionai-hire-mcp",
+  "version": "0.1.1",
+  "description": "MCP server for hirers on the nextmillionai silent network \u2014 structured search, interest, chat, and double-opt-in reveal, driven from your own LLM",
+  "type": "module",
+  "main": "index.js",
+  "license": "Apache-2.0",
+  "engines": {
+    "node": ">=18"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nextmillionai/nextmillionai.git",
+    "directory": "nextmillionai-hire-mcp"
+  },
+  "homepage": "https://github.com/nextmillionai/nextmillionai/blob/feat/silent-network-client/nextmillionai-hire-mcp/README.md",
+  "bugs": {
+    "url": "https://github.com/nextmillionai/nextmillionai/issues"
+  },
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "hiring",
+    "nextmillionai",
+    "silent-network",
+    "agent"
+  ],
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.12.0",
+    "zod": "^4.4.3"
+  },
+  "bin": {
+    "nextmillionai-hire-mcp": "./index.js"
+  },
+  "files": [
+    "index.js",
+    "README.md",
+    "LICENSE",
+    "NOTICE"
+  ]
+}
