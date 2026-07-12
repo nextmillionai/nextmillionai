@@ -7,6 +7,32 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added — the developer package on npm: both personas are one-liners
+
+- **`nextmillionai-mcp@1.1.1` published to npm** — the developer side
+  (all 23 MCP tools + the `nma-net` CLI) installs with
+  `npm install -g nextmillionai-mcp` (CLI) or
+  `claude mcp add nextmillionai -- npx -y nextmillionai-mcp` (MCP);
+  cloning the repo is only needed to run the Python engine (profile
+  generation) or work from source. The tarball is standalone: it ships
+  its own copy of the network contract (generated at pack time from
+  `docs/network-contract/`), so schema validation works with no repo
+  present, plus LICENSE/NOTICE and full registry metadata.
+- **Root README** gains the two-persona install table — developer and
+  hiring person, one command each, both defaulting to the hosted relay.
+
+### Changed — consent UX: authored messages send without a second yes
+
+- In the `nma-net` CLI, a chat MESSAGE you typed yourself now sends
+  immediately — running the command is the approval; the v0
+  readable-bodies note still prints. Accept/decline/withdraw (state
+  changes) and reveal/unpublish/block/register/publish (irreversible)
+  keep the payload card + explicit yes. Piped stdin still refuses,
+  with sharper wording: a script can neither consent nor speak for
+  you. **Agent-composed MCP messages keep the approval card
+  unconditionally** — that card is the prompt-injection/auto-reply
+  guard, and it is untouched.
+
 ### Changed — hirer onboarding: automatic, and one-line install
 
 - **`nextmillionai-hire-mcp@0.1.0` published to npm** — install is now
