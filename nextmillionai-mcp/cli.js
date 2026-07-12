@@ -7,9 +7,11 @@
 //   - the identity file   ~/.nextmillionai/network/identity.json
 //     (NEXTMILLIONAI_HOME overrides the root; NMA_NET_BUILDER_ID /
 //     NMA_NET_TOKEN env identities win and are never written)
-//   - the consent rules   (docs/network-contract/HANDOFF.md): the exact
-//     payload is shown and a human types approval at an interactive
-//     terminal BEFORE anything mutating is sent — piped stdin refuses
+//   - the consent rules   (docs/network-contract/HANDOFF.md): if you
+//     typed the words, they send (a chat MESSAGE you authored needs no
+//     second yes); everything else mutating shows the exact payload and
+//     waits for a typed approval at an interactive terminal. Piped
+//     stdin always refuses — a script can neither consent nor speak
 //   - the pure logic      (net-lib.js): band mapping that refuses
 //     unmeasured signals, contract-schema validation, identifiability
 //     warnings + widen
@@ -341,11 +343,24 @@ async function cmdRespond(net, opts) {
     MESSAGE: 'v0 honesty: the relay stores message bodies readably (E2E encryption is the first fast-follow) — the operator could read this.',
     WITHDRAW: 'Terminal — ends the conversation from any live state; a pending reveal is cancelled.',
   };
-  console.log('APPROVAL — nothing has been sent yet.');
-  console.log(`  Action: POST /v1/messages on ${opts.base}`);
-  console.log(`  Envelope:\n${JSON.stringify(envelope, null, 2)}`);
-  console.log(`  Note: ${notes[action]}`);
-  await confirm('Send it? Type yes:');
+  if (action === 'MESSAGE') {
+    // Authored-by-you = approved-by-you: you typed these exact words in
+    // the command, so there is no second party to review and no second
+    // "yes" — running the command IS the human approval. The pipe guard
+    // stays: a script cannot send messages (no auto-replies, ever).
+    if (!process.stdin.isTTY) {
+      fail('messages send only from an interactive terminal — a script cannot speak for you (no auto-replies).');
+    }
+    console.log(`Note: ${notes.MESSAGE}`);
+  } else {
+    // State changes (accept opens chat; decline/withdraw are TERMINAL)
+    // keep the card + explicit yes.
+    console.log('APPROVAL — nothing has been sent yet.');
+    console.log(`  Action: POST /v1/messages on ${opts.base}`);
+    console.log(`  Envelope:\n${JSON.stringify(envelope, null, 2)}`);
+    console.log(`  Note: ${notes[action]}`);
+    await confirm('Send it? Type yes:');
+  }
   const { status, json } = await net('/v1/messages', { method: 'POST', token, body: envelope });
   if (status !== 200) fail(netError(status, json));
   console.log(`${action} sent for ${opts.conv}.` + (json?.state ? ` Conversation state: ${json.state}.` : ''));

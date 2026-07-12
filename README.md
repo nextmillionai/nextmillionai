@@ -265,9 +265,10 @@ python3 -m nextmillionai            # writes ~/.nextmillionai/data/profile.json
 
 # 3. Join: register -> verify by email -> publish. No relay setup — the
 #    client defaults to the hosted relay (network.nextmillionai.org); set
-#    NMA_NET_BASE only to point at a local/self-hosted one. Every mutating
-#    step prints the EXACT payload and waits for your typed "yes" (a pipe
-#    cannot consent).
+#    NMA_NET_BASE only to point at a local/self-hosted one. Messages you
+#    type send directly (authored = approved); every OTHER mutating step
+#    prints the EXACT payload and waits for your typed "yes" (a pipe can
+#    neither consent nor speak for you).
 nma-net register --email you@example.org            # sends ONLY the email; code arrives in your inbox
 nma-net register --code 123456                      # builder id is remembered from step 1
 nma-net prefs --availability passive --roles ai_engineer --remote true --tz "UTC+3..+7"

@@ -89,7 +89,8 @@ built strictly against it and enforce what the server can't:
   until end-to-end encryption ships; the tools tell you before you
   approve any message.
 
-Config: `NMA_NET_BASE` (default `http://127.0.0.1:7750`); identity is
+Config: `NMA_NET_BASE` (default `https://network.nextmillionai.org`;
+override for a local/self-hosted relay); identity is
 stored at `~/.nextmillionai/network/identity.json` by
 `nma_net_register`, or supplied via `NMA_NET_BUILDER_ID` /
 `NMA_NET_TOKEN` for demo identities. The end-to-end walkthrough is
@@ -118,10 +119,12 @@ nma-net unpublish                           # hard delete; type the builder id
 Both frontends share the identity file, the contract mirror, and the
 same `net-lib.js` logic — band mapping that refuses unmeasured
 signals, schema validation, the identifiability check. The consent
-rules hold in both: the CLI shows the exact payload and requires a
-typed answer at an interactive terminal; piped stdin refuses (a script
-cannot consent). The profile is always DERIVED from the local engine
-assessment (`python3 -m nextmillionai`) — bands cannot be hand-written.
+rules hold in both, with one deliberate asymmetry: a chat message you
+typed yourself sends immediately (authored = approved), while
+everything else mutating — and every agent-composed MCP message —
+shows the exact payload and waits for your explicit yes. Piped stdin
+always refuses: a script can neither consent nor speak for you.
+The profile is always DERIVED from the local engine assessment (`python3 -m nextmillionai`) — bands cannot be hand-written.
 
 ## Privacy
 

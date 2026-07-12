@@ -523,3 +523,32 @@ logic. prepack copies rather than commits the contract to avoid a
 third mirror drifting. Engine-tools-need-repo is documented rather
 than hidden. Gates: 669 pytest, ruff, format green. Verdict:
 **APPROVE**.
+
+### Commit — feat(cli): authored messages send without a second yes (PO decision 2026-07-12)
+
+Scope: consent UX. The PO flagged real friction: after a conversation
+is accepted, every chat message still demanded a typed "yes" — in the
+CLI that is double consent, because the human composed the exact words
+in the command they just ran. New rule, one sentence: **if you typed
+the words, they send; if an agent wrote them or you can't take it
+back, you confirm.** Concretely: `nma-net respond --action message`
+now sends immediately (the v0 readable-bodies note still prints);
+accept / decline / withdraw keep the card + yes (state changes, two of
+them terminal); reveal / unpublish / block / register / publish keep
+confirmation everywhere; and **the MCP's per-message approval card is
+untouched** — agent-composed text is exactly where a human review
+guards against prompt-injection auto-replies. The pipe guard hardened:
+piped stdin on a MESSAGE refuses with "a script cannot speak for you"
+— the no-auto-replies promise now rests on the TTY requirement rather
+than the redundant prompt. Package bumped to 1.1.1 (published 1.1.0
+predates this); READMEs updated (root quickstart + package consent
+paragraph, plus a stale localhost default-base line found and fixed).
+New pin: MESSAGE branch prompt-free but TTY-guarded, other actions
+keep confirm, MCP respond keeps confirmed:true.
+
+**APE review:** The promise "humans approve every outbound message"
+survives re-reading: authorship IS approval when the human typed the
+message; the prompt only ever protected against a second author, which
+the CLI does not have. The risky surface (MCP/agent) is deliberately
+unchanged. Verified: piped MESSAGE refuses (live), 16 consent pins
+green, node --check clean. Verdict: **APPROVE**.

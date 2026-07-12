@@ -277,3 +277,25 @@ def test_dev_package_publishes_standalone():
         assert re.search(r"existsSync\([^)]*contract", src.replace("'", '"')) or (
             "_PACKAGED_CONTRACT" in src
         ), f"{path.name} must prefer the packaged contract copy"
+
+
+def test_cli_authored_messages_send_without_a_second_yes():
+    """PO decision 2026-07-12: a chat MESSAGE the human typed themselves
+    needs no confirmation prompt (running the command IS the approval),
+    but it still refuses piped stdin (no auto-replies), and every other
+    respond action (accept / decline / withdraw — state changes, two of
+    them terminal) keeps the card + explicit yes. MCP messages keep the
+    approval card unconditionally (agent-composed text)."""
+    src = CLI_JS.read_text()
+    start = src.index("async function cmdRespond")
+    block = src[start : src.index("async function", start + 10)]
+    msg_branch = block[block.index("if (action === 'MESSAGE')") :]
+    non_msg = msg_branch[msg_branch.index("} else {") :]
+    msg_only = msg_branch[: msg_branch.index("} else {")]
+    assert "isTTY" in msg_only and "confirm(" not in msg_only, (
+        "authored MESSAGE must be prompt-free but TTY-guarded"
+    )
+    assert "await confirm(" in non_msg, "accept/decline/withdraw must keep the card"
+    # the MCP tool keeps confirmed:true for MESSAGE (agent-composed)
+    mcp_block = _tool_block(DEV_MCP.read_text(), "nma_net_respond")
+    assert "confirmed" in mcp_block and "MESSAGE" in mcp_block
