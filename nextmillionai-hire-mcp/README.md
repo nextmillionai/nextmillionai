@@ -49,7 +49,7 @@ Onboarding is fully automatic: no human approval step, no waiting.
 Desktop, Cursor, …) · a work email on your company's domain
 (free-mail addresses like gmail are rejected for hirers).
 
-### Steps 1+2 — Add the MCP server (no clone, no token yet — that's fine)
+### Step 1 — Add the MCP server (no clone, no token yet — that's fine)
 
 The package is on npm, so `npx` fetches and runs it — nothing to clone
 or install. Registration works without a token; everything else
@@ -85,7 +85,7 @@ cd nextmillionai/nextmillionai-hire-mcp && npm install
 # "command": "node", "args": ["/absolute/path/to/nextmillionai-hire-mcp/index.js"]
 ```
 
-### Step 3 — Register
+### Step 2 — Register
 
 In your MCP host, ask your agent to register you — it drives
 `nma_hire_register` with your **work email** + **company domain** (the
@@ -105,7 +105,7 @@ your company domain. Builders see **company size + sector only** until
 a double-approved reveal; the domain itself is disclosed to a builder
 only at reveal fulfillment.
 
-### Step 4 — Check your work email
+### Step 3 — Check your work email
 
 Registration onboards you on the spot: an email arrives at the work
 address you registered, carrying your pseudonymous id, your bearer
@@ -115,7 +115,7 @@ public. No email after a minute or two? Check spam, then re-register
 (a failed delivery leaves nothing usable behind; you simply get a
 fresh id).
 
-### Step 5 — Add the token and restart your MCP host
+### Step 4 — Add the token and restart your MCP host
 
 Claude Code:
 
@@ -124,13 +124,13 @@ claude mcp remove nextmillionai-hire
 claude mcp add nextmillionai-hire --env NMA_HIRE_TOKEN=<token from the onboarding email> -- npx -y nextmillionai-hire-mcp
 ```
 
-Other hosts — add the `env` block to the server entry from steps 1+2:
+Other hosts — add the `env` block to the server entry from step 1:
 
 ```json
       "env": { "NMA_HIRE_TOKEN": "<token from the onboarding email>" }
 ```
 
-### Step 6 — First session
+### Step 5 — First session
 
 - `nma_hire_search` with your role's facets — if you get a (possibly
   empty) watermarked result page, you're live.
@@ -149,7 +149,7 @@ arrives at your registered work address; the old one dies.
 
 | Symptom | Meaning / fix |
 |---|---|
-| `NMA_HIRE_TOKEN is not set` | Steps 4–5 not done yet — only register works tokenless |
+| `NMA_HIRE_TOKEN is not set` | Steps 3–4 not done yet — only register works tokenless |
 | `401` on any tool | Wrong/revoked token — use the one from the onboarding email |
 | `403` at registration | Free-mail domain, or email doesn't match `company_domain` |
 | `502` at registration | The onboarding email couldn't be sent — nothing was created; try again |

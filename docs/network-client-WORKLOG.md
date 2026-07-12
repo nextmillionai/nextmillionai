@@ -477,3 +477,15 @@ keeping the from-checkout path the demo actually uses.
 test passed before these claims were written. Badge is the single
 standard shields.io image — no emoji, consistent with web-surface
 rules. No code touched; gates green. Verdict: **APPROVE**.
+
+### Commit 20 — docs(hire-mcp): renumber onboarding steps 1–5
+
+Scope: numbering only. The npx rework had merged the old clone+config
+steps into a "Steps 1+2" heading; PO asked for plain sequential
+numbering. Now: 1 add server · 2 register · 3 check email · 4 token ·
+5 first session, with both cross-references updated (env block "from
+step 1"; failure table "Steps 3–4 not done yet").
+
+**APE review:** Grepped every step reference in the file after the
+edit — headings and cross-references agree; no content changes.
+Verdict: **APPROVE**.
