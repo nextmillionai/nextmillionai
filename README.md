@@ -240,6 +240,14 @@ free-text chat opens only after you accept; identity moves only on a
 **double-approved, irrevocable reveal**. The relay does zero inference —
 your own agent is your representative, and its definition is public.
 
+**Two personas, one npm install each** (node ≥ 18; both default to the
+hosted relay — zero setup):
+
+| You are | Install | You can |
+|---|---|---|
+| **Developer** (builder) | `npm install -g nextmillionai-mcp` → the `nma-net` CLI **and** the MCP server. MCP in chat: `claude mcp add nextmillionai -- npx -y nextmillionai-mcp` | measure locally → publish a banded profile → read interest → accept / decline → chat → double-opt-in reveal → hard-delete out |
+| **Hiring person** | `claude mcp add nextmillionai-hire -- npx -y nextmillionai-hire-mcp` (any MCP host works — see below) | register with a work email (token arrives by email, no waiting) → structured search → send role-card interest → chat → reveal |
+
 **Publish from a terminal — no MCP required.** The `nma_net_*` MCP tools
 drive this from an LLM host; the bundled **`nma-net`** CLI makes a plain
 terminal a first-class frontend. Both share the same identity file,
@@ -247,8 +255,9 @@ contract mirror, and consent rules.
 
 ```bash
 # 1. Get the client + put `nma-net` on your PATH (node >= 18)
-git clone git@github.com:nextmillionai/nextmillionai.git
-cd nextmillionai/nextmillionai-mcp && npm link && cd ..
+npm install -g nextmillionai-mcp
+#   (from source instead: git clone https://github.com/nextmillionai/nextmillionai.git
+#    then `npm link` inside nextmillionai-mcp/)
 
 # 2. Measure locally — the network profile is DERIVED from this; nothing
 #    is uploaded (unmeasured signals refuse to publish, never estimated).

@@ -489,3 +489,37 @@ step 1"; failure table "Steps 3–4 not done yet").
 **APE review:** Grepped every step reference in the file after the
 edit — headings and cross-references agree; no content changes.
 Verdict: **APPROVE**.
+
+### Commit — chore(mcp): nextmillionai-mcp npm-publishable; validation caught a standalone blocker
+
+Scope: pre-publish validation of nextmillionai-mcp (PO to publish),
+plus the doc pass. The dry-run caught a real blocker: both index.js and
+cli.js read the contract schemas from the REPO's docs/network-contract/
+— a pure npm install has no repo, so `nma-net publish` (and
+nma_net_publish) could never validate. Fix: the tarball ships its own
+contract/ copy, generated at pack time from the repo mirror
+(package.json "prepack" — no third committed copy, single source of
+truth intact, generated dir gitignored); both entry points resolve
+packaged-first, repo-mirror second. Also brought the package to parity
+with the published hire package: repository/homepage/bugs/keywords
+metadata, LICENSE + NOTICE shipped, files allowlist pinned. Hire
+package bumped 0.1.0 → 0.1.1 (published 0.1.0 predates its LICENSE/
+NOTICE — next publish ships them). READMEs: root gains the two-persona
+install table (developer: npm i -g / npx; hiring: npx) and the
+dev-package README leads with the npm setup + an honest "engine tools
+still want the repo" note. New pin test: files allowlist, prepack,
+license, bins, packaged-first resolution.
+
+Validated from the actual artifact, not the source: npm pack →
+install into an isolated prefix → `nma-net help` runs; the MCP bin
+stays alive on stdio; and publish driven to the consent gate from the
+tarball alone (profile built, PACKAGED schema validated, live
+histograms fetched, approval card shown, piped consent refused).
+
+**APE review:** The interesting failure was invisible in-repo — every
+in-repo test passes while the shipped artifact was broken; hence the
+isolated-prefix validation and the pin test that greps the resolution
+logic. prepack copies rather than commits the contract to avoid a
+third mirror drifting. Engine-tools-need-repo is documented rather
+than hidden. Gates: 669 pytest, ruff, format green. Verdict:
+**APPROVE**.

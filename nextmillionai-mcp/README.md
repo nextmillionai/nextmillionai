@@ -1,35 +1,48 @@
 # nextmillionai-mcp
 
-The nextmillionai engine, as MCP tools. Same engine as the CLI: every
-tool shells out to the Python package in this repo or reads its local
-JSON. Fully local by default — the only tool that sends anything
-anywhere is `nma_publish`, which is explicitly gated behind a two-step
-consent protocol and revocable via `nma_unpublish`.
+[![npm](https://img.shields.io/npm/v/nextmillionai-mcp)](https://www.npmjs.com/package/nextmillionai-mcp)
+
+The nextmillionai engine, as MCP tools — plus the developer side of the
+silent network (`nma_net_*` tools and the `nma-net` CLI). Fully local
+by default: nothing is sent anywhere except the explicitly consented
+network actions (`nma_publish` to a registry; `nma_net_*` to the
+relay), each gated behind payload display + your explicit yes, and
+revocable.
 
 ## Setup
 
-**Claude Code, inside this repo:** nothing to do. The checked-in
-`.mcp.json` at the repo root registers the server; approve it when
-Claude Code asks.
+**From npm — no clone (Node ≥ 18):**
 
-**Claude Desktop / Cursor / any MCP client:** point the client at
-`index.js` with an absolute path:
+```bash
+# MCP server in Claude Code, one line:
+claude mcp add nextmillionai -- npx -y nextmillionai-mcp
 
-```json
-{
-  "mcpServers": {
-    "nextmillionai": {
-      "command": "node",
-      "args": ["/absolute/path/to/nextmillionai/nextmillionai-mcp/index.js"]
-    }
-  }
-}
+# …or any MCP host (Claude Desktop, Cursor, …):
+#   "command": "npx", "args": ["-y", "nextmillionai-mcp"]
+
+# the nma-net terminal CLI (same package):
+npm install -g nextmillionai-mcp
+nma-net help
 ```
 
-Requirements: Node 18+ and a checkout of this repo. No pip install
-needed — the server locates the Python engine from its own path and
-runs it with your `python3`. Run `npm install` in this directory once
-(installs the MCP SDK and zod; nothing else).
+What works standalone from npm: **everything network-side** — all
+`nma_net_*` tools and the whole `nma-net` lifecycle (the package ships
+its own copy of the contract schemas). The **engine** tools
+(`nma_assess`, `nma_get_profile`, …) shell out to the Python engine,
+so they additionally need either `nextmillionai` on your PATH or a
+checkout of this repo — without one they fail with guidance, and
+`nma_doctor` diagnoses the setup. Generating your profile is the one
+step that still wants the repo:
+
+```bash
+git clone https://github.com/nextmillionai/nextmillionai.git
+python3 -m nextmillionai      # run in the repo — writes ~/.nextmillionai/data/profile.json
+```
+
+**From source instead:** inside this repo, Claude Code needs nothing
+(the checked-in `.mcp.json` registers the server — approve it when
+asked); any other MCP client points at `index.js` by absolute path
+with `"command": "node"`. Run `npm install` in this directory once.
 
 Data lives where the CLI puts it: `$NEXTMILLIONAI_HOME/data` or
 `~/.nextmillionai/data`.

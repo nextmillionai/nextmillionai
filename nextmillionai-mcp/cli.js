@@ -17,6 +17,7 @@
 // default https://network.nextmillionai.org) — never anywhere else.
 // Override the base for a local or self-hosted relay.
 
+import { existsSync } from 'node:fs';
 import { mkdir, readFile, rm, writeFile } from 'node:fs/promises';
 import { homedir } from 'node:os';
 import { dirname, join } from 'node:path';
@@ -34,7 +35,12 @@ const USER_HOME = process.env.NEXTMILLIONAI_HOME || join(homedir(), '.nextmillio
 const PROFILE_PATH = join(USER_HOME, 'data', 'profile.json');
 const NET_DIR = join(USER_HOME, 'network');
 const IDENTITY_PATH = join(NET_DIR, 'identity.json');
-const CONTRACT_DIR = join(dirname(dirname(fileURLToPath(import.meta.url))), 'docs', 'network-contract');
+// Packaged contract copy first (npm install — generated at pack time;
+// see package.json "prepack"), repo mirror second (source checkout).
+const _PKG_DIR = dirname(fileURLToPath(import.meta.url));
+const CONTRACT_DIR = existsSync(join(_PKG_DIR, 'contract'))
+  ? join(_PKG_DIR, 'contract')
+  : join(dirname(_PKG_DIR), 'docs', 'network-contract');
 
 const ROLES = ['ai_engineer', 'software_engineer', 'platform_engineer', 'founding_engineer', 'staff_engineer', 'engineering_manager', 'consultant_fractional'];
 const TZ_BANDS = ['UTC-12..-8', 'UTC-8..-4', 'UTC-4..0', 'UTC+0..+3', 'UTC+3..+7', 'UTC+7..+12'];

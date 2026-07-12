@@ -1,7 +1,7 @@
 {
   "name": "nextmillionai-hire-mcp",
-  "version": "0.1.0",
-  "description": "MCP server for hirers on the nextmillionai silent network — structured search, interest, chat, and double-opt-in reveal, driven from your own LLM",
+  "version": "0.1.1",
+  "description": "MCP server for hirers on the nextmillionai silent network \u2014 structured search, interest, chat, and double-opt-in reveal, driven from your own LLM",
   "type": "module",
   "main": "index.js",
   "license": "Apache-2.0",

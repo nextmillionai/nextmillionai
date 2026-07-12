@@ -1,7 +1,7 @@
 {
   "name": "nextmillionai-mcp",
   "version": "1.1.0",
-  "description": "MCP server + nma-net CLI for nextmillionai — AI coding profile tools and the silent network client",
+  "description": "MCP server + nma-net CLI for nextmillionai \u2014 AI coding profile tools and the silent network client",
   "type": "module",
   "main": "index.js",
   "license": "Apache-2.0",
@@ -20,6 +20,30 @@
     "index.js",
     "cli.js",
     "net-lib.js",
-    "README.md"
-  ]
+    "contract/",
+    "README.md",
+    "LICENSE",
+    "NOTICE"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nextmillionai/nextmillionai.git",
+    "directory": "nextmillionai-mcp"
+  },
+  "homepage": "https://github.com/nextmillionai/nextmillionai/blob/feat/silent-network-client/nextmillionai-mcp/README.md",
+  "bugs": {
+    "url": "https://github.com/nextmillionai/nextmillionai/issues"
+  },
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "ai-coding-profile",
+    "nextmillionai",
+    "silent-network",
+    "cli",
+    "agent"
+  ],
+  "scripts": {
+    "prepack": "node --input-type=module -e \"import {cpSync, rmSync} from 'node:fs'; rmSync('contract', {recursive: true, force: true}); cpSync('../docs/network-contract', 'contract', {recursive: true});\""
+  }
 }

@@ -257,3 +257,23 @@ def test_cli_carries_the_same_honesty_lines():
     assert re.search(r"if \(source === 'file'\)[\s\S]{0,120}rm\(IDENTITY_PATH", src), (
         "cli.js unpublish must guard rm(IDENTITY_PATH) behind source === 'file'"
     )
+
+
+def test_dev_package_publishes_standalone():
+    """The npm tarball must work with no repo around it: the contract
+    schemas ship inside the package (generated at pack time), both entry
+    points resolve the packaged copy first, and the license text ships."""
+    import json
+
+    pkg = json.loads((ROOT / "nextmillionai-mcp" / "package.json").read_text())
+    for required in ("contract/", "LICENSE", "NOTICE", "cli.js", "net-lib.js"):
+        assert required in pkg["files"], f"npm files allowlist lost {required}"
+    assert "prepack" in pkg.get("scripts", {}), "prepack must generate contract/"
+    assert "network-contract" in pkg["scripts"]["prepack"]
+    assert pkg["license"] == "Apache-2.0"
+    assert set(pkg["bin"]) == {"nextmillionai-mcp", "nma-net"}
+    for path in (DEV_MCP, ROOT / "nextmillionai-mcp" / "cli.js"):
+        src = path.read_text()
+        assert re.search(r"existsSync\([^)]*contract", src.replace("'", '"')) or (
+            "_PACKAGED_CONTRACT" in src
+        ), f"{path.name} must prefer the packaged contract copy"

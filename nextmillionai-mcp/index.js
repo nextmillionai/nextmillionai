@@ -22,6 +22,7 @@ import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
 import { z } from 'zod';
 import { execFile } from 'node:child_process';
+import { existsSync } from 'node:fs';
 import { readFile, writeFile, mkdtemp, mkdir, rm, access } from 'node:fs/promises';
 import {
   buildNetworkProfile, validateAgainstSchema, identifiabilityWarnings,
@@ -656,7 +657,14 @@ server.tool(
 const NET_BASE = (process.env.NMA_NET_BASE || 'https://network.nextmillionai.org').replace(/\/$/, '');
 const NET_DIR = join(USER_HOME, 'network');
 const NET_IDENTITY_PATH = join(NET_DIR, 'identity.json');
-const CONTRACT_DIR = join(REPO_ROOT, 'docs', 'network-contract');
+// Contract schemas: an npm install ships its own copy inside the package
+// (generated at pack time from the repo mirror — package.json "prepack"),
+// so the standalone tarball validates offline; a source checkout reads
+// the repo mirror directly. Single source of truth either way.
+const _PACKAGED_CONTRACT = join(dirname(fileURLToPath(import.meta.url)), 'contract');
+const CONTRACT_DIR = existsSync(_PACKAGED_CONTRACT)
+  ? _PACKAGED_CONTRACT
+  : join(REPO_ROOT, 'docs', 'network-contract');
 
 async function loadNetIdentity() {
   try {
