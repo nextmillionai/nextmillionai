@@ -552,3 +552,26 @@ message; the prompt only ever protected against a second author, which
 the CLI does not have. The risky surface (MCP/agent) is deliberately
 unchanged. Verified: piped MESSAGE refuses (live), 16 consent pins
 green, node --check clean. Verdict: **APPROVE**.
+
+### Commit — fix(sdk-harness): MCP children get a whitelisted env, not the parent's
+
+Scope: `agents/adapters/sdk/run-rep.mjs` only. Both MCP server specs
+passed `env: process.env` to the child process — every parent variable,
+including `ANTHROPIC_API_KEY`, reached a tool process that needs none
+of it. The children now get an explicit whitelist: `PATH`/`HOME` (so
+`node` resolves and the identity file lands under the right home) plus
+`NEXTMILLIONAI_HOME`/`NMA_NET_BASE` shared, `NMA_NET_BUILDER_ID`/
+`NMA_NET_TOKEN` (and the engine's optional `NEXTMILLIONAI_PROFILE_PATH` override, since the builder server spawns python) for the builder rep, `NMA_HIRE_TOKEN` for the hirer
+rep. Unset names are skipped, so defaults behave exactly as before.
+This narrows the harness toward its own stated contract ("the rep only
+reaches the world through its MCP tool group"); the remaining harness
+findings from the 2026-07-23 PR review (`allowedTools` shadowing
+`canUseTool`, and the callback's blanket final allow) are separate,
+deliberate follow-ups — not touched here.
+
+**APE review:** The whitelist is the full set the two servers read
+(verified against `process.env` uses in `nextmillionai-mcp/index.js`,
+`cli.js` is not spawned here, and `nextmillionai-hire-mcp/index.js`);
+nothing else can regress because absent vars fall back to the same
+defaults in-child. Verified: node --check clean, node --test 8/8,
+pytest 669, ruff check+format, mypy — all green. Verdict: **APPROVE**.

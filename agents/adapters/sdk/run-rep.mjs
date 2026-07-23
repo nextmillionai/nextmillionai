@@ -40,19 +40,27 @@ const systemPrompt = [
   '\n\n# Context rules\n\n' + await readFile(join(bundle, 'context.md'), 'utf-8'),
 ].join('');
 
+/** The MCP child gets ONLY what it needs — never the parent's full env
+ * (ANTHROPIC_API_KEY and whatever else the shell carries stay out of the
+ * rep's tool process). PATH/HOME so node resolves and the identity file
+ * lands under the right home. */
+const pickEnv = (names) =>
+  Object.fromEntries(names.filter((n) => process.env[n] !== undefined).map((n) => [n, process.env[n]]));
+const SHARED_ENV = ['PATH', 'HOME', 'NEXTMILLIONAI_HOME', 'NMA_NET_BASE'];
+
 const mcpServers = rep === 'builder-rep'
   ? {
       nextmillionai: {
         command: 'node',
         args: [join(REPO, 'nextmillionai-mcp', 'index.js')],
-        env: process.env,
+        env: pickEnv([...SHARED_ENV, 'NMA_NET_BUILDER_ID', 'NMA_NET_TOKEN', 'NEXTMILLIONAI_PROFILE_PATH']),
       },
     }
   : {
       'nextmillionai-hire': {
         command: 'node',
         args: [join(REPO, 'nextmillionai-hire-mcp', 'index.js')],
-        env: process.env,
+        env: pickEnv([...SHARED_ENV, 'NMA_HIRE_TOKEN']),
       },
     };
 
