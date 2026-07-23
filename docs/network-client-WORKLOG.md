@@ -575,3 +575,34 @@ deliberate follow-ups — not touched here.
 nothing else can regress because absent vars fall back to the same
 defaults in-child. Verified: node --check clean, node --test 8/8,
 pytest 669, ruff check+format, mypy — all green. Verdict: **APPROVE**.
+
+### Commit — docs(architecture): ARCHITECTURE.md learns the network client
+
+Scope: `ARCHITECTURE.md` only. The doc predated this branch — its
+module map ended at "bridge: MCP server for Claude/Cursor" and its
+diagram had no network client at all. Rewritten around the two-plane
+frame (local profiler / silent-network client), then per audience:
+a **product view** (what ships per persona — builder MCP + `nma-net`
+CLI, hirer package, rep-agent bundles — and the seven product
+invariants, each phrased as enforced-somewhere-concrete) and a
+**tech view** (machine-boundary diagram, one-contract-three-consumers,
+pure-net-lib/thin-frontends split, identity/credential rules, the four
+guardrail layers, harness adapters). Module map gains hire / reps /
+contract rows; the data-contract section now also states the mirror
+ownership rule (relay owns `docs/network-contract/`; never edited
+here, only re-synced). Deliberately contract-level only: nothing about
+relay internals, hosting, or operations — the public doc describes the
+observable system. The SDK-harness line says "meant to look-and-draft
+only" with hardening tracked here, NOT that the headless deny works —
+the allowedTools shadowing finding stays open and the doc must not
+promise a broken guarantee.
+
+**APE review:** Checked every claim against code or the mirrored
+contract: tool counts (14+9 / 7) match the servers and CURRENT.md;
+consent asymmetry line matches the 2026-07-12 PO decision; env-identity
+"never write" is stated as the rule (its publish-path gap is a tracked
+review finding, not a doc matter); no ranking language; no emoji;
+leak-scan grep clean (no private repo/org names, no infra, no paths).
+ARCHITECTURE.md already indexed in CURRENT.md (Product row) — no index
+change needed. Gates: pytest 669, ruff check+format, mypy, node 9/9
+green. Verdict: **APPROVE**.
